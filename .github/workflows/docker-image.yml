@@ -52,7 +52,7 @@ jobs:
 
       - name: Set correct DockerHub repository name
         run: |
-          echo "DOCKERHUB_REPOSITORY_LC=${DOCKERHUB_USERNAME,,}/${REPOSITORY#*/}" >> ${GITHUB_ENV}
+          echo "DOCKERHUB_REPOSITORY_LC=${DOCKERHUB_USERNAME}/${REPOSITORY#*/}" >> ${GITHUB_ENV}
         env:
           DOCKERHUB_USERNAME: '${{ secrets.DOCKER_HUB_USERNAME}}'
           REPOSITORY: '${{ github.repository }}'
