@@ -223,6 +223,8 @@ const messageHandle = async (data) => {
 
   startTime = performance.now();
   console.log("Load begins", startTime);
+  // Sync trick to prevent gRPC overload so that the follwing large-volume insert
+  // operation would not cause "Error: 14 UNAVAILABLE: Connection dropped"
   await milvusClient.collectionManager.loadCollectionSync({
     collection_name: "trace_moe",
   });
