@@ -29,14 +29,14 @@ const initializeMilvusCollection = async () => {
           dim: "360",
         },
       },
-      {
-        name: "cl_hi",
-        data_type: 21, //DataType.VARCHAR
-        type_params: {
-          max_length: "200",
-        },
-        description: "Metric Spaces Indexing",
-      },
+      // {
+      //   name: "cl_hi",
+      //   data_type: 21, //DataType.VARCHAR
+      //   type_params: {
+      //     max_length: "200",
+      //   },
+      //   description: "Metric Spaces Indexing",
+      // },
       {
         name: "id",
         data_type: 21, //DataType.VARCHAR
@@ -130,105 +130,117 @@ const messageHandle = async (data) => {
     }
   });
 
-  const jsonData = dedupedHashList.map((doc) => {
-    return {
-      id: `${file}/${doc.time.toFixed(2)}`,
-      cl_hi: doc.cl_hi,
-      cl_ha: getCharCodesVector(doc.cl_ha.split(" ").join(""), 360, 100000),
-      primary_key: getPrimaryKey(doc.cl_hi),
-    };
-  });
+  // The retry mechanism to prevent GRPC error
+  const fallBack = async () => {
+    try {
+      const jsonData = dedupedHashList.map((doc) => {
+        return {
+          id: `${file}/${doc.time.toFixed(2)}`,
+          // cl_hi: doc.cl_hi, // reduce index size
+          cl_ha: getCharCodesVector(doc.cl_ha.split(" ").join(""), 360, 100000),
+          primary_key: getPrimaryKey(doc.cl_hi),
+        };
+      });
 
-  const milvusClient = new MilvusClient(MILVUS_URL);
+      const milvusClient = new MilvusClient(MILVUS_URL);
 
-  console.log(`Uploading JSON data to Milvus`);
+      console.log(`Uploading JSON data to Milvus`);
 
-  let startTime = performance.now();
-  console.log("Insert begins", startTime);
-  // Insert at a batch of 10 thousand each time, if more than that
-  let loopCount = jsonData.length / 10000;
-  if (loopCount <= 1) {
-    await milvusClient.dataManager.insert({
-      collection_name: "trace_moe",
-      fields_data: jsonData,
-    });
-  } else {
-    for (let i = 0; i < Math.ceil(loopCount); i++) {
-      if (i === Math.ceil(loopCount) - 1) {
+      let startTime = performance.now();
+      console.log("Insert begins", startTime);
+      // Insert at a batch of 10 thousand each time, if more than that
+      let loopCount = jsonData.length / 10000;
+      if (loopCount <= 1) {
         await milvusClient.dataManager.insert({
           collection_name: "trace_moe",
-          fields_data: jsonData.slice(i * 10000),
+          fields_data: jsonData,
         });
-        break;
+      } else {
+        for (let i = 0; i < Math.ceil(loopCount); i++) {
+          if (i === Math.ceil(loopCount) - 1) {
+            await milvusClient.dataManager.insert({
+              collection_name: "trace_moe",
+              fields_data: jsonData.slice(i * 10000),
+            });
+            break;
+          }
+          await milvusClient.dataManager.insert({
+            collection_name: "trace_moe",
+            fields_data: jsonData.slice(i * 10000, i * 10000 + 10000),
+          });
+          // Pause 500ms to prevent GRPC "Error: 14 UNAVAILABLE: Connection dropped"
+          // Reference: https://groups.google.com/g/grpc-io/c/xTJ8pUe9F_E
+          await new Promise((resolve) => setTimeout(resolve, 500));
+        }
       }
-      await milvusClient.dataManager.insert({
+
+      // // Parallel, don't use for exceed TPC concurrency limit
+      // // and the following "Error: 14 UNAVAILABLE: Connection dropped"
+
+      // let loopCount = jsonData.length / 10000;
+      // if (loopCount <= 1) {
+      //   await milvusClient.dataManager.insert({
+      //     collection_name: "trace_moe",
+      //     fields_data: jsonData,
+      //   });
+      // } else {
+      //   const batchList = [];
+      //   for (let i = 0; i < Math.ceil(loopCount); i++) {
+      //     if (i === Math.ceil(loopCount) - 1) {
+      //       batchList.push(jsonData.slice(i * 10000));
+      //       break;
+      //     }
+      //     batchList.push(jsonData.slice(i * 10000, i * 10000 + 10000));
+      //   }
+      //   await Promise.all(
+      //     batchList.map(async (batch) => {
+      //       await milvusClient.dataManager.insert({
+      //         collection_name: "trace_moe",
+      //         fields_data: batch,
+      //       });
+      //     })
+      //   );
+      // }
+
+      console.log("Insert done", performance.now() - startTime);
+
+      startTime = performance.now();
+      console.log("Flush begins", startTime);
+      await milvusClient.dataManager.flushSync({ collection_names: ["trace_moe"] });
+      console.log("Flush done", performance.now() - startTime);
+
+      const index_params = {
+        metric_type: "L2",
+        index_type: "IVF_SQ8",
+        params: JSON.stringify({ nlist: 128 }),
+      };
+
+      startTime = performance.now();
+      console.log("Index begins", startTime);
+      await milvusClient.indexManager.createIndex({
         collection_name: "trace_moe",
-        fields_data: jsonData.slice(i * 10000, i * 10000 + 10000),
+        field_name: "cl_ha",
+        extra_params: index_params,
       });
-      // Pause 500ms to prevent GRPC "Error: 14 UNAVAILABLE: Connection dropped"
-      // Reference: https://groups.google.com/g/grpc-io/c/xTJ8pUe9F_E
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      console.log("Index done", performance.now() - startTime);
+
+      startTime = performance.now();
+      console.log("Load begins", startTime);
+      // Sync trick to prevent gRPC overload so that the follwing large-volume insert
+      // operation would not cause "Error: 14 UNAVAILABLE: Connection dropped"
+      await milvusClient.collectionManager.loadCollectionSync({
+        collection_name: "trace_moe",
+      });
+      console.log("Load done", performance.now() - startTime);
+    } catch (error) {
+      console.log(error);
+      console.log("Reconnecting in 3 seconds");
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      fallBack();
     }
-  }
-
-  // // Parallel, don't use for exceed TPC concurrency limit
-  // // and the following "Error: 14 UNAVAILABLE: Connection dropped"
-
-  // let loopCount = jsonData.length / 10000;
-  // if (loopCount <= 1) {
-  //   await milvusClient.dataManager.insert({
-  //     collection_name: "trace_moe",
-  //     fields_data: jsonData,
-  //   });
-  // } else {
-  //   const batchList = [];
-  //   for (let i = 0; i < Math.ceil(loopCount); i++) {
-  //     if (i === Math.ceil(loopCount) - 1) {
-  //       batchList.push(jsonData.slice(i * 10000));
-  //       break;
-  //     }
-  //     batchList.push(jsonData.slice(i * 10000, i * 10000 + 10000));
-  //   }
-  //   await Promise.all(
-  //     batchList.map(async (batch) => {
-  //       await milvusClient.dataManager.insert({
-  //         collection_name: "trace_moe",
-  //         fields_data: batch,
-  //       });
-  //     })
-  //   );
-  // }
-
-  console.log("Insert done", performance.now() - startTime);
-
-  startTime = performance.now();
-  console.log("Flush begins", startTime);
-  await milvusClient.dataManager.flushSync({ collection_names: ["trace_moe"] });
-  console.log("Flush done", performance.now() - startTime);
-
-  const index_params = {
-    metric_type: "L2",
-    index_type: "IVF_SQ8",
-    params: JSON.stringify({ nlist: 1024 }),
   };
 
-  startTime = performance.now();
-  console.log("Index begins", startTime);
-  await milvusClient.indexManager.createIndex({
-    collection_name: "trace_moe",
-    field_name: "cl_ha",
-    extra_params: index_params,
-  });
-  console.log("Index done", performance.now() - startTime);
-
-  startTime = performance.now();
-  console.log("Load begins", startTime);
-  // Sync trick to prevent gRPC overload so that the follwing large-volume insert
-  // operation would not cause "Error: 14 UNAVAILABLE: Connection dropped"
-  await milvusClient.collectionManager.loadCollectionSync({
-    collection_name: "trace_moe",
-  });
-  console.log("Load done", performance.now() - startTime);
+  fallBack();
 
   await fetch(`${TRACE_API_URL}/loaded/${anilistID}/${encodeURIComponent(fileName)}`, {
     headers: { "x-trace-secret": TRACE_API_SECRET },
