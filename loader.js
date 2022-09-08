@@ -139,15 +139,14 @@ const messageHandle = async (data) => {
     };
   });
 
-  // Redeclare milvusClient multiple times to prevent
-  // "Error: 14 UNAVAILABLE: Connection dropped"
-  let milvusClient = new MilvusClient(MILVUS_URL);
+  const milvusClient = new MilvusClient(MILVUS_URL);
 
   console.log(`Uploading JSON data to Milvus`);
 
-  console.log("Insert begins", performance.now());
-  // Insert at a batch of 20 thousand each time, if more than that
-  let loopCount = jsonData.length / 20000;
+  let startTime = performance.now();
+  console.log("Insert begins", startTime);
+  // Insert at a batch of 10 thousand each time, if more than that
+  let loopCount = jsonData.length / 10000;
   if (loopCount <= 1) {
     await milvusClient.dataManager.insert({
       collection_name: "trace_moe",
@@ -158,14 +157,17 @@ const messageHandle = async (data) => {
       if (i === Math.ceil(loopCount) - 1) {
         await milvusClient.dataManager.insert({
           collection_name: "trace_moe",
-          fields_data: jsonData.slice(i * 20000),
+          fields_data: jsonData.slice(i * 10000),
         });
         break;
       }
       await milvusClient.dataManager.insert({
         collection_name: "trace_moe",
-        fields_data: jsonData.slice(i * 20000, i * 20000 + 20000),
+        fields_data: jsonData.slice(i * 10000, i * 10000 + 10000),
       });
+      // Pause 500ms to prevent GRPC "Error: 14 UNAVAILABLE: Connection dropped"
+      // Reference: https://groups.google.com/g/grpc-io/c/xTJ8pUe9F_E
+      await new Promise((resolve) => setTimeout(resolve, 500));
     }
   }
 
@@ -197,12 +199,12 @@ const messageHandle = async (data) => {
   //   );
   // }
 
-  console.log("Insert done", performance.now());
+  console.log("Insert done", performance.now() - startTime);
 
-  milvusClient = new MilvusClient(MILVUS_URL);
-  console.log("Flush begins", performance.now());
-  await milvusClient.dataManager.flush({ collection_names: ["trace_moe"] });
-  console.log("Flush done", performance.now());
+  startTime = performance.now();
+  console.log("Flush begins", startTime);
+  await milvusClient.dataManager.flushSync({ collection_names: ["trace_moe"] });
+  console.log("Flush done", performance.now() - startTime);
 
   const index_params = {
     metric_type: "L2",
@@ -210,21 +212,21 @@ const messageHandle = async (data) => {
     params: JSON.stringify({ nlist: 1024 }),
   };
 
-  milvusClient = new MilvusClient(MILVUS_URL);
-  console.log("Index begins", performance.now());
+  startTime = performance.now();
+  console.log("Index begins", startTime);
   await milvusClient.indexManager.createIndex({
     collection_name: "trace_moe",
     field_name: "cl_ha",
     extra_params: index_params,
   });
-  console.log("Index done", performance.now());
+  console.log("Index done", performance.now() - startTime);
 
-  milvusClient = new MilvusClient(MILVUS_URL);
-  console.log("Load begins", performance.now());
-  await milvusClient.collectionManager.loadCollection({
+  startTime = performance.now();
+  console.log("Load begins", startTime);
+  await milvusClient.collectionManager.loadCollectionSync({
     collection_name: "trace_moe",
   });
-  console.log("Load done", performance.now());
+  console.log("Load done", performance.now() - startTime);
 
   await fetch(`${TRACE_API_URL}/loaded/${anilistID}/${encodeURIComponent(fileName)}`, {
     headers: { "x-trace-secret": TRACE_API_SECRET },
