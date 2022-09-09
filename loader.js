@@ -168,9 +168,9 @@ const messageHandle = async (data) => {
             collection_name: "trace_moe",
             fields_data: jsonData.slice(i * 10000, i * 10000 + 10000),
           });
-          // Pause 500ms to prevent GRPC "Error: 14 UNAVAILABLE: Connection dropped"
+          // Pause 1000ms to prevent GRPC "Error: 14 UNAVAILABLE: Connection dropped"
           // Reference: https://groups.google.com/g/grpc-io/c/xTJ8pUe9F_E
-          await new Promise((resolve) => setTimeout(resolve, 500));
+          await new Promise((resolve) => setTimeout(resolve, 1000));
         }
       }
 
@@ -224,23 +224,28 @@ const messageHandle = async (data) => {
       });
       console.log("Index done", performance.now() - startTime);
 
-      startTime = performance.now();
-      console.log("Load begins", startTime);
-      // Sync trick to prevent gRPC overload so that the follwing large-volume insert
-      // operation would not cause "Error: 14 UNAVAILABLE: Connection dropped"
-      await milvusClient.collectionManager.loadCollectionSync({
-        collection_name: "trace_moe",
-      });
-      console.log("Load done", performance.now() - startTime);
+      /* 
+        Not trigger load yet at the index period.
+        Take it at the search period to enchence index performance
+      */
+
+      // startTime = performance.now();
+      // console.log("Load begins", startTime);
+      // // Sync trick to prevent gRPC overload so that the follwing large-volume insert
+      // // operation would not cause "Error: 14 UNAVAILABLE: Connection dropped"
+      // await milvusClient.collectionManager.loadCollectionSync({
+      //   collection_name: "trace_moe",
+      // });
+      // console.log("Load done", performance.now() - startTime);
     } catch (error) {
       console.log(error);
-      console.log("Reconnecting in 3 seconds");
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      console.log("Reconnecting in 30 seconds");
+      await new Promise((resolve) => setTimeout(resolve, 30000));
       fallBack();
     }
   };
 
-  fallBack();
+  await fallBack();
 
   await fetch(`${TRACE_API_URL}/loaded/${anilistID}/${encodeURIComponent(fileName)}`, {
     headers: { "x-trace-secret": TRACE_API_SECRET },
