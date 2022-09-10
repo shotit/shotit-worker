@@ -26,7 +26,7 @@ const initializeMilvusCollection = async () => {
         description: "Dynamic fields for LIRE Solr",
         data_type: 101, // DataType.FloatVector
         type_params: {
-          dim: "360",
+          dim: "128",
         },
       },
       // {
@@ -59,12 +59,27 @@ const initializeMilvusCollection = async () => {
   await milvusClient.collectionManager.createCollection(params);
 };
 
-const getCharCodesVector = (str, length = 360, base = 100000) => {
+/**
+ * getCharCodesVector
+ * @param {String} str
+ * eg. '3ef d3c 2cc 7b6 9dd 2b6 549 852 582 dfd c5e c01 6af ccf 46f
+ *      1a5 5b 4a6 f8b 6d2 6a9 48d 2a1 59d ed5 b78 ac3 75 44d c15
+ *      cb3 954 1d9 44f 3a3 15b 44d 331 603 43d fb ef1 4e7 46 e92
+ *      ec6 848 c7c 8e8 8df 441 39a aa 6d6 911 9f9 d6f c2c 942 3b3
+ *      5b2 94c 521 a4c 6ac b38 7a9 584 d2a 5e3 c30 da1 733 12c fc3
+ *      dbd 152 3fa 15a b81 c24 cb beb e21 357 a0e 48e 300 19 827
+ *      2c6 b67 651 dba 9a4 b4b 85 d75 f78 c30'
+ * @param {Number} length
+ * @param {Number} base
+ * @returns []Number
+ */
+const getCharCodesVector = (str, length = 128, base = 100) => {
+  const arr = str.split(" ").map((el) => parseInt(el, 16));
   let charCodeArr = Array(length).fill(0);
 
-  // str.length should be less than parameter length
-  for (let i = 0; i < str.length; i++) {
-    let code = str.charCodeAt(i);
+  // arr.length should be less than parameter length
+  for (let i = 0; i < arr.length; i++) {
+    let code = arr[i];
     charCodeArr[i] = parseFloat(code / base);
   }
 
@@ -137,7 +152,7 @@ const messageHandle = async (data) => {
         return {
           id: `${file}/${doc.time.toFixed(2)}`,
           // cl_hi: doc.cl_hi, // reduce index size
-          cl_ha: getCharCodesVector(doc.cl_ha.split(" ").join(""), 360, 100000),
+          cl_ha: getCharCodesVector(doc.cl_ha, 128, 100),
           primary_key: getPrimaryKey(doc.cl_hi),
         };
       });
