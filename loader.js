@@ -237,21 +237,21 @@ const messageHandle = async (data) => {
       //   collection_name: "trace_moe",
       // });
       // console.log("Load done", performance.now() - startTime);
+
+      await fetch(`${TRACE_API_URL}/loaded/${anilistID}/${encodeURIComponent(fileName)}`, {
+        headers: { "x-trace-secret": TRACE_API_SECRET },
+      });
+      ws.send(data);
+      console.log(`Loaded ${file}`);
     } catch (error) {
       console.log(error);
       console.log("Reconnecting in 30 seconds");
       await new Promise((resolve) => setTimeout(resolve, 30000));
-      fallBack();
+      await fallBack();
     }
   };
 
   await fallBack();
-
-  await fetch(`${TRACE_API_URL}/loaded/${anilistID}/${encodeURIComponent(fileName)}`, {
-    headers: { "x-trace-secret": TRACE_API_SECRET },
-  });
-  ws.send(data);
-  console.log(`Loaded ${file}`);
 };
 
 const closeHandle = async () => {
