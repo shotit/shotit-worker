@@ -26,7 +26,7 @@ const initializeMilvusCollection = async () => {
         description: "Dynamic fields for LIRE Solr",
         data_type: 101, // DataType.FloatVector
         type_params: {
-          dim: "128",
+          dim: "100",
         },
       },
       // {
@@ -60,7 +60,7 @@ const initializeMilvusCollection = async () => {
 };
 
 /**
- * getCharCodesVector
+ * getNormalizedCharCodesVector
  * @param {String} str
  * eg. '3ef d3c 2cc 7b6 9dd 2b6 549 852 582 dfd c5e c01 6af ccf 46f
  *      1a5 5b 4a6 f8b 6d2 6a9 48d 2a1 59d ed5 b78 ac3 75 44d c15
@@ -73,7 +73,7 @@ const initializeMilvusCollection = async () => {
  * @param {Number} base
  * @returns []Number
  */
-const getCharCodesVector = (str, length = 128, base = 100) => {
+const getNormalizedCharCodesVector = (str, length = 100, base = 1) => {
   const arr = str.split(" ").map((el) => parseInt(el, 16));
   let charCodeArr = Array(length).fill(0);
 
@@ -83,7 +83,13 @@ const getCharCodesVector = (str, length = 128, base = 100) => {
     charCodeArr[i] = parseFloat(code / base);
   }
 
-  return charCodeArr;
+  const norm = Math.sqrt(
+    charCodeArr.reduce((acc, cur) => {
+      return acc + cur * cur;
+    }, 0)
+  );
+
+  return charCodeArr.map((el) => el / norm);
 };
 
 const getPrimaryKey = (str) => {
@@ -152,7 +158,7 @@ const messageHandle = async (data) => {
         return {
           id: `${file}/${doc.time.toFixed(2)}`,
           // cl_hi: doc.cl_hi, // reduce index size
-          cl_ha: getCharCodesVector(doc.cl_ha, 128, 100),
+          cl_ha: getNormalizedCharCodesVector(doc.cl_ha, 100, 1),
           primary_key: getPrimaryKey(doc.cl_hi),
         };
       });
@@ -225,7 +231,7 @@ const messageHandle = async (data) => {
       console.log("Flush done", performance.now() - startTime);
 
       const index_params = {
-        metric_type: "L2",
+        metric_type: "IP",
         index_type: "IVF_SQ8",
         params: JSON.stringify({ nlist: 128 }),
       };
