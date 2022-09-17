@@ -56,7 +56,7 @@ const getNormalizedCharCodesVector = (str, length = 100, base = 1) => {
 const search = async (hash) => {
   const milvusClient = new MilvusClient(MILVUS_URL);
 
-  await milvusClient.collectionManager.loadCollection({
+  await milvusClient.collectionManager.loadCollectionSync({
     collection_name: "trace_moe",
   });
 
