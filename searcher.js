@@ -67,10 +67,20 @@ const search = async (hash) => {
     params: JSON.stringify({ nprobe: 10 }),
   };
 
+  const normalizedCharCodesVector = getNormalizedCharCodesVector(hash);
+
+  console.log("hash: ");
+
+  console.log(hash);
+
+  console.log("normalizedCharCodesVector: ");
+
+  console.log(normalizedCharCodesVector);
+
   const results = await milvusClient.dataManager.search({
     collection_name: "trace_moe",
     expr: "",
-    vectors: [getNormalizedCharCodesVector(hash)],
+    vectors: [normalizedCharCodesVector],
     search_params: searchParams,
     vector_type: 101, // DataType.FloatVector
     output_fields: ["id", "primary_key"],

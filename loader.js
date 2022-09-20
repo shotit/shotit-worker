@@ -266,8 +266,8 @@ const messageHandle = async (data) => {
       console.log(`Loaded ${file}`);
     } catch (error) {
       console.log(error);
-      console.log("Reconnecting in 30 seconds");
-      await new Promise((resolve) => setTimeout(resolve, 30000));
+      console.log("Reconnecting in 60 seconds");
+      await new Promise((resolve) => setTimeout(resolve, 60000));
       await fallBack();
     }
   };
