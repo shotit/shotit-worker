@@ -169,8 +169,8 @@ const messageHandle = async (data) => {
 
       let startTime = performance.now();
       console.log("Insert begins", startTime);
-      // Insert at a batch of 10 thousand each time, if more than that
-      let loopCount = jsonData.length / 10000;
+      // Insert at a batch of 1 thousand each time, if more than that
+      let loopCount = jsonData.length / 1000;
       if (loopCount <= 1) {
         await milvusClient.dataManager.insert({
           collection_name: "trace_moe",
@@ -181,17 +181,17 @@ const messageHandle = async (data) => {
           if (i === Math.ceil(loopCount) - 1) {
             await milvusClient.dataManager.insert({
               collection_name: "trace_moe",
-              fields_data: jsonData.slice(i * 10000),
+              fields_data: jsonData.slice(i * 1000),
             });
             break;
           }
           await milvusClient.dataManager.insert({
             collection_name: "trace_moe",
-            fields_data: jsonData.slice(i * 10000, i * 10000 + 10000),
+            fields_data: jsonData.slice(i * 1000, i * 1000 + 1000),
           });
-          // Pause 1000ms to prevent GRPC "Error: 14 UNAVAILABLE: Connection dropped"
+          // Pause 500ms to prevent GRPC "Error: 14 UNAVAILABLE: Connection dropped"
           // Reference: https://groups.google.com/g/grpc-io/c/xTJ8pUe9F_E
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+          await new Promise((resolve) => setTimeout(resolve, 500));
         }
       }
 
