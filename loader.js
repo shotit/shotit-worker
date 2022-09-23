@@ -4,6 +4,8 @@ import xmldoc from "xmldoc";
 import lzma from "lzma-native";
 import fetch from "node-fetch";
 import { MilvusClient } from "@zilliz/milvus2-sdk-node";
+import JBC from "jsbi-calculator";
+const { calculator } = JBC;
 
 const { TRACE_API_URL, TRACE_API_SECRET, MILVUS_URL } = process.env;
 
@@ -89,7 +91,7 @@ const getNormalizedCharCodesVector = (str, length = 100, base = 1) => {
     }, 0)
   );
 
-  return charCodeArr.map((el) => el / norm);
+  return charCodeArr.map((el) => parseFloat(calculator(`${el} / ${norm}`)));
 };
 
 const getPrimaryKey = (str) => {
