@@ -8,6 +8,8 @@ import crypto from "crypto";
 import bodyParser from "body-parser";
 import fetch from "node-fetch";
 import { MilvusClient } from "@zilliz/milvus2-sdk-node";
+import JBC from "jsbi-calculator";
+const { calculator } = JBC;
 
 const {
   PORT = 19531,
@@ -50,7 +52,7 @@ const getNormalizedCharCodesVector = (str, length = 100, base = 1) => {
     }, 0)
   );
 
-  return charCodeArr.map((el) => el / norm);
+  return charCodeArr.map((el) => parseFloat(calculator(`${el} / ${norm}`)));
 };
 
 const search = async (hash) => {
