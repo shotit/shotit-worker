@@ -4,6 +4,7 @@ import xmldoc from "xmldoc";
 import lzma from "lzma-native";
 import fetch from "node-fetch";
 import { MilvusClient } from "@zilliz/milvus2-sdk-node";
+import cron from "node-cron";
 import JBC from "jsbi-calculator";
 const { calculator } = JBC;
 
@@ -214,10 +215,11 @@ const messageHandle = async (data) => {
 
       console.log("Insert done", performance.now() - startTime);
 
-      startTime = performance.now();
-      console.log("Flush begins", startTime);
-      await milvusClient.dataManager.flushSync({ collection_names: ["trace_moe"] });
-      console.log("Flush done", performance.now() - startTime);
+      // Turn to use cron schedule for flush, once a day at 00:00 am.
+      // startTime = performance.now();
+      // console.log("Flush begins", startTime);
+      // await milvusClient.dataManager.flushSync({ collection_names: ["trace_moe"] });
+      // console.log("Flush done", performance.now() - startTime);
 
       const index_params = {
         metric_type: "IP",
@@ -279,6 +281,14 @@ const closeHandle = async () => {
     console.log("Reconnecting in 5 seconds");
     await new Promise((resolve) => setTimeout(resolve, 5000));
     closeHandle();
+  });
+  // Flush once a day at 00:00 am.
+  cron.schedule("0 0 * * *", async () => {
+    startTime = performance.now();
+    const milvusClient = new MilvusClient(MILVUS_URL);
+    console.log("Flush begins", startTime);
+    await milvusClient.dataManager.flushSync({ collection_names: ["trace_moe"] });
+    console.log("Flush done", performance.now() - startTime);
   });
 };
 
