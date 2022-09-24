@@ -157,6 +157,8 @@ const messageHandle = async (data) => {
   // The retry mechanism to prevent GRPC error
   const fallBack = async () => {
     try {
+      console.log(`Polish JSON data`);
+
       const jsonData = dedupedHashList.map((doc) => {
         return {
           id: `${file}/${doc.time.toFixed(2)}`,
@@ -228,11 +230,10 @@ const messageHandle = async (data) => {
 
       console.log("Insert done", performance.now() - startTime);
 
-      // Turn to use cron schedule for flush, once a day at 00:00 am.
-      // startTime = performance.now();
-      // console.log("Flush begins", startTime);
-      // await milvusClient.dataManager.flushSync({ collection_names: ["trace_moe"] });
-      // console.log("Flush done", performance.now() - startTime);
+      startTime = performance.now();
+      console.log("Flush begins", startTime);
+      await milvusClient.dataManager.flushSync({ collection_names: ["trace_moe"] });
+      console.log("Flush done", performance.now() - startTime);
 
       const index_params = {
         metric_type: "IP",
