@@ -60,6 +60,8 @@ const initializeMilvusCollection = async () => {
   await milvusClient.collectionManager.releaseCollection({ collection_name: "trace_moe" });
 
   await milvusClient.collectionManager.createCollection(params);
+
+  milvusClient.closeConnection();
 };
 
 /**
@@ -154,6 +156,7 @@ const messageHandle = async (data) => {
     }
   });
 
+  const milvusClient = new MilvusClient(MILVUS_URL);
   // The retry mechanism to prevent GRPC error
   const fallBack = async () => {
     try {
@@ -169,9 +172,8 @@ const messageHandle = async (data) => {
       });
 
       // Pause for 5 seconds to make node arrange the compute resource.
+      console.log("Pause for 5 seconds");
       await new Promise((resolve) => setTimeout(resolve, 5000));
-
-      const milvusClient = new MilvusClient(MILVUS_URL);
 
       console.log(`Uploading JSON data to Milvus`);
 
@@ -272,6 +274,7 @@ const messageHandle = async (data) => {
       });
       ws.send(data);
       console.log(`Loaded ${file}`);
+      milvusClient.closeConnection();
     } catch (error) {
       console.log(error);
       console.log("Reconnecting in 60 seconds");
@@ -306,6 +309,7 @@ const closeHandle = async () => {
     console.log("Flush begins", startTime);
     await milvusClient.dataManager.flushSync({ collection_names: ["trace_moe"] });
     console.log("Flush done", performance.now() - startTime);
+    milvusClient.closeConnection();
   });
 };
 
