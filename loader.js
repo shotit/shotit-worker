@@ -168,6 +168,9 @@ const messageHandle = async (data) => {
         };
       });
 
+      // Pause for 5 seconds to make node arrange the compute resource.
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+
       const milvusClient = new MilvusClient(MILVUS_URL);
 
       console.log(`Uploading JSON data to Milvus`);
