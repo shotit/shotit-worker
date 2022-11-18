@@ -9,7 +9,7 @@ import bodyParser from "body-parser";
 import fetch from "node-fetch";
 import { MilvusClient } from "@zilliz/milvus2-sdk-node";
 import JBC from "jsbi-calculator";
-const { calculator } = JBC;
+const { calculator, BigDecimal } = JBC;
 
 const {
   PORT = 19531,
@@ -46,11 +46,13 @@ const getNormalizedCharCodesVector = (str, length = 100, base = 1) => {
     charCodeArr[i] = parseFloat(code / base);
   }
 
-  const norm = Math.sqrt(
-    charCodeArr.reduce((acc, cur) => {
-      return acc + cur * cur;
-    }, 0)
-  );
+  const norm = BigDecimal.sqrt(
+    String(
+      charCodeArr.reduce((acc, cur) => {
+        return acc + cur * cur;
+      }, 0)
+    )
+  ).toString();
 
   return charCodeArr.map((el) => parseFloat(calculator(`${el} / ${norm}`)));
 };
