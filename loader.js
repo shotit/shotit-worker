@@ -6,7 +6,7 @@ import fetch from "node-fetch";
 import { MilvusClient } from "@zilliz/milvus2-sdk-node";
 import cron from "node-cron";
 import JBC from "jsbi-calculator";
-const { calculator } = JBC;
+const { calculator, BigDecimal } = JBC;
 
 const { TRACE_API_URL, TRACE_API_SECRET, MILVUS_URL } = process.env;
 
@@ -88,11 +88,13 @@ const getNormalizedCharCodesVector = (str, length = 100, base = 1) => {
     charCodeArr[i] = parseFloat(code / base);
   }
 
-  const norm = Math.sqrt(
-    charCodeArr.reduce((acc, cur) => {
-      return acc + cur * cur;
-    }, 0)
-  );
+  const norm = BigDecimal.sqrt(
+    String(
+      charCodeArr.reduce((acc, cur) => {
+        return acc + cur * cur;
+      }, 0)
+    )
+  ).toString();
 
   return charCodeArr.map((el) => parseFloat(calculator(`${el} / ${norm}`)));
 };
@@ -179,8 +181,8 @@ const messageHandle = async (data) => {
 
       let startTime = performance.now();
       console.log("Insert begins", startTime);
-      // Insert at a batch of 1 thousand each time, if more than that
-      let loopCount = jsonData.length / 1000;
+      // Insert at a batch of 5 thousand each time, if more than that
+      let loopCount = jsonData.length / 5000;
       if (loopCount <= 1) {
         await milvusClient.dataManager.insert({
           collection_name: "trace_moe",
@@ -191,13 +193,13 @@ const messageHandle = async (data) => {
           if (i === Math.ceil(loopCount) - 1) {
             await milvusClient.dataManager.insert({
               collection_name: "trace_moe",
-              fields_data: jsonData.slice(i * 1000),
+              fields_data: jsonData.slice(i * 5000),
             });
             break;
           }
           await milvusClient.dataManager.insert({
             collection_name: "trace_moe",
-            fields_data: jsonData.slice(i * 1000, i * 1000 + 1000),
+            fields_data: jsonData.slice(i * 5000, i * 5000 + 5000),
           });
           // Pause 500ms to prevent GRPC "Error: 14 UNAVAILABLE: Connection dropped"
           // Reference: https://groups.google.com/g/grpc-io/c/xTJ8pUe9F_E
