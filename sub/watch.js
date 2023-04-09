@@ -19,7 +19,7 @@ setInterval(async () => {
 
 const upload = async () => {
   const filePath = queue.shift();
-  const anilistID = filePath.replace(TRACE_WATCH_PATH, "").split("/")[0];
+  const imdbID = filePath.replace(TRACE_WATCH_PATH, "").split("/")[0];
   const fileName = filePath.replace(TRACE_WATCH_PATH, "").split("/").pop();
 
   if (![".mp4"].includes(path.extname(fileName).toLowerCase())) {
@@ -28,16 +28,16 @@ const upload = async () => {
     return;
   }
 
-  console.log(`Uploading ${anilistID}/${fileName}`);
-  const res = await fetch(`${TRACE_MEDIA_URL}/file/${anilistID}/${encodeURIComponent(fileName)}`, {
+  console.log(`Uploading ${imdbID}/${fileName}`);
+  const res = await fetch(`${TRACE_MEDIA_URL}/file/${imdbID}/${encodeURIComponent(fileName)}`, {
     method: "PUT",
     body: fs.createReadStream(filePath),
     headers: { "x-trace-secret": TRACE_API_SECRET },
   });
   if (res.status === 201 || res.status === 204) {
-    console.log(`Uploaded ${anilistID}/${fileName}`);
+    console.log(`Uploaded ${imdbID}/${fileName}`);
     const response = await fetch(
-      `${TRACE_API_URL}/uploaded/${anilistID}/${encodeURIComponent(fileName)}`,
+      `${TRACE_API_URL}/uploaded/${imdbID}/${encodeURIComponent(fileName)}`,
       {
         headers: { "x-trace-secret": TRACE_API_SECRET },
       }

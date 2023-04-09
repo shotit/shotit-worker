@@ -22,7 +22,7 @@ const initializeMilvusCollection = async () => {
 
   const params = {
     collection_name: "trace_moe",
-    description: "Trace.moe Index Data Collection",
+    description: "shotit Index Data Collection",
     fields: [
       {
         name: "cl_ha",
@@ -46,7 +46,7 @@ const initializeMilvusCollection = async () => {
         type_params: {
           max_length: "500",
         },
-        description: "${anilistID}/${fileName}/${time}",
+        description: "${imdbID}/${fileName}/${time}",
       },
       {
         name: "primary_key",
@@ -117,9 +117,9 @@ const messageHandle = async (data) => {
   const { file } = JSON.parse(data.toString());
 
   console.log(`Downloading ${file}.xml.xz`);
-  const [anilistID, fileName] = file.split("/");
+  const [imdbID, fileName] = file.split("/");
   const res = await fetch(
-    `${TRACE_API_URL}/hash/${anilistID}/${encodeURIComponent(fileName)}.xml.xz`,
+    `${TRACE_API_URL}/hash/${imdbID}/${encodeURIComponent(fileName)}.xml.xz`,
     {
       headers: { "x-trace-secret": TRACE_API_SECRET },
     }
@@ -271,7 +271,7 @@ const messageHandle = async (data) => {
       // });
       // console.log("Load done", performance.now() - startTime);
 
-      await fetch(`${TRACE_API_URL}/loaded/${anilistID}/${encodeURIComponent(fileName)}`, {
+      await fetch(`${TRACE_API_URL}/loaded/${imdbID}/${encodeURIComponent(fileName)}`, {
         headers: { "x-trace-secret": TRACE_API_SECRET },
       });
       ws.send(data);
