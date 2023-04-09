@@ -1,0 +1,25 @@
+{
+  "apps": [
+    {
+      "name": "shotit-hasher",
+      "script": "hasher.js",
+      "instances": 1,
+      "autorestart": true,
+      "exec_mode": "cluster"
+    },
+    {
+      "name": "shotit-loader",
+      "script": "loader.js",
+      "instances": 1,
+      "autorestart": true,
+      "exec_mode": "cluster"
+    },
+    {
+      "name": "shotit-watcher",
+      "script": "watch.js",
+      "instances": 1,
+      "autorestart": true,
+      "exec_mode": "fork"
+    }
+  ]
+}

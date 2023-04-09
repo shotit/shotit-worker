@@ -1,0 +1,46 @@
+{
+  "name": "shotit-worker",
+  "version": "0.1.0",
+  "description": "Four core workers of shotit: watcher, hasher, loader and searcher",
+  "main": "",
+  "type": "module",
+  "scripts": {
+    "start": "pm2 start ecosystem.config.json",
+    "stop": "pm2 stop ecosystem.config.json",
+    "restart": "pm2 restart ecosystem.config.json",
+    "reload": "pm2 reload ecosystem.config.json",
+    "delete": "pm2 delete ecosystem.config.json",
+    "prettier": "prettier",
+    "format": "prettier --write \"**/*.js\"",
+    "lint": "prettier --check \"**/*.js\"",
+    "test": "prettier --check \"**/*.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soruly/shotit-worker.git"
+  },
+  "author": "soruly",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/soruly/shotit-worker/issues"
+  },
+  "homepage": "https://github.com/soruly/shotit-worker#readme",
+  "dependencies": {
+    "@zilliz/milvus2-sdk-node": "^2.1.2",
+    "body-parser": "^1.20.0",
+    "chokidar": "^3.5.3",
+    "dotenv": "^16.0.2",
+    "express": "^4.18.1",
+    "express-rate-limit": "^6.6.0",
+    "fs-extra": "^10.1.0",
+    "jsbi-calculator": "^0.3.5",
+    "lzma-native": "^8.0.6",
+    "node-cron": "^3.0.2",
+    "node-fetch": "^3.2.10",
+    "ws": "^8.9.0",
+    "xmldoc": "^1.2.0"
+  },
+  "devDependencies": {
+    "prettier": "^2.7.1"
+  }
+}
