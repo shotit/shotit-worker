@@ -30,7 +30,7 @@
     "body-parser": "^1.20.0",
     "chokidar": "^3.5.3",
     "dotenv": "^16.0.2",
-    "express": "^4.18.1",
+    "express": "^4.18.2",
     "express-rate-limit": "^6.6.0",
     "fs-extra": "^10.1.0",
     "jsbi-calculator": "^0.3.5",
