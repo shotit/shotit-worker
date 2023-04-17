@@ -50,12 +50,9 @@ const messageHandle = async (data) => {
   console.log(`Downloading ${file}`);
   const [imdbID, fileName] = file.split("/");
   const mp4FilePath = path.join(tempPath, "video.mp4");
-  const video = await fetch(
-    `${TRACE_MEDIA_URL}/file/${imdbID}/${encodeURIComponent(fileName)}`,
-    {
-      headers: { "x-trace-secret": TRACE_API_SECRET },
-    }
-  );
+  const video = await fetch(`${TRACE_MEDIA_URL}/file/${imdbID}/${encodeURIComponent(fileName)}`, {
+    headers: { "x-trace-secret": TRACE_API_SECRET },
+  });
   if (video.status >= 400) {
     console.log(`Error: Fail to download video "${await video.text()}"`);
     ws.send(data);

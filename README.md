@@ -1,10 +1,16 @@
 # shotit-worker
 
-[![License](https://img.shields.io/github/license/soruly/shotit-worker.svg?style=flat-square)](https://github.com/soruly/shotit-worker/blob/master/LICENSE)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/soruly/shotit-worker/Docker%20Image%20CI?style=flat-square)](https://github.com/soruly/shotit-worker/actions)
-[![Docker](https://img.shields.io/docker/pulls/soruly/shotit-worker-hasher?style=flat-square)](https://hub.docker.com/r/soruly/shotit-worker-hasher)
-[![Docker Image Size](https://img.shields.io/docker/image-size/soruly/shotit-worker-hasher/latest?style=flat-square)](https://hub.docker.com/r/soruly/shotit-worker-hasher)
-[![Discord](https://img.shields.io/discord/437578425767559188.svg?style=flat-square)](https://discord.gg/K9jn6Kj)
+[![License](https://img.shields.io/github/license/shotit/shotit-worker.svg?style=flat-square)](https://github.com/shotit/shotit-worker/blob/master/LICENSE)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/shotit/shotit-worker/Docker%20Image%20CI?style=flat-square)](https://github.com/shotit/shotit-worker/actions)
+[![Watcher Docker](https://img.shields.io/docker/pulls/shotit/shotit-worker-watcher?style=flat-square)](https://hub.docker.com/r/lesliewong007/shotit-worker-watcher)
+[![Watcher Docker Image Size](https://img.shields.io/docker/image-size/shotit/shotit-worker-watcher/latest?style=flat-square)](https://hub.docker.com/r/lesliewong007/shotit-worker-watcher)
+[![Hasher Docker](https://img.shields.io/docker/pulls/shotit/shotit-worker-hasher?style=flat-square)](https://hub.docker.com/r/lesliewong007/shotit-worker-hasher)
+[![Hasher Docker Image Size](https://img.shields.io/docker/image-size/shotit/shotit-worker-hasher/latest?style=flat-square)](https://hub.docker.com/r/lesliewong007/shotit-worker-hasher)
+[![Loader Docker](https://img.shields.io/docker/pulls/shotit/shotit-worker-loader?style=flat-square)](https://hub.docker.com/r/lesliewong007/shotit-worker-loader)
+[![Loader Docker Image Size](https://img.shields.io/docker/image-size/shotit/shotit-worker-loader/latest?style=flat-square)](https://hub.docker.com/r/lesliewong007/shotit-worker-loader)
+[![Searcher Docker](https://img.shields.io/docker/pulls/shotit/shotit-worker-searcher?style=flat-square)](https://hub.docker.com/r/lesliewong007/shotit-worker-searcher)
+[![Searcher Docker Image Size](https://img.shields.io/docker/image-size/shotit/shotit-worker-searcher/latest?style=flat-square)](https://hub.docker.com/r/lesliewong007/shotit-worker-searcher)
+
 
 Backend workers for [shotit](https://github.com/shotit/shotit). Four core workers of shotit: watcher, hasher, loader and searcher.
 
@@ -28,7 +34,7 @@ Backend workers for [shotit](https://github.com/shotit/shotit). Four core worker
 Install Prerequisites first, then:
 
 ```
-git clone https://github.com/soruly/shotit-worker.git
+git clone https://github.com/shotit/shotit-worker.git
 cd shotit-worker
 npm install
 ```
