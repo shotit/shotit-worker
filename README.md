@@ -17,7 +17,7 @@ Backend workers for [shotit](https://github.com/shotit/shotit). Four core worker
 
 - watch file system changes and upload hash to shotit-media
 - download video from shotit-media, hash, and upload to shotit-api
-- download hash from shotit-api, deduplicate, and upload to solr
+- download hash from shotit-api, deduplicate, and upload to milvus
 
 ### Prerequisites
 
