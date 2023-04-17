@@ -4,10 +4,13 @@ on:
   push:
     branches: [main]
     tags: [v*]
+  pull_request:
+    branches: [main]
 
 jobs:
   hasher:
     name: build hasher image
+    if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
 
     steps:
@@ -77,6 +80,7 @@ jobs:
 
   loader:
     name: build loader image
+    if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
 
     steps:
@@ -135,6 +139,7 @@ jobs:
 
   watcher:
     name: build watcher image
+    if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
 
     steps:
@@ -193,6 +198,7 @@ jobs:
 
   searcher:
     name: build searcher image
+    if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
 
     steps:
