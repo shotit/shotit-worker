@@ -84,7 +84,7 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.15.11.tgz#b3b790f09cb1696cffcec605de025b088fa4225f"
   integrity sha512-E5Kwq2n4SbMzQOn6wnmBjuK9ouqlURrcZDVfbo9ftDDTFt3nk7ZKK4GMOzoYgnpQJKcxwQw+lGaBvvlMo0qN/Q==
 
-"@zilliz/milvus2-sdk-node@^2.1.2":
+"@zilliz/milvus2-sdk-node@^2.2.4":
   version "2.2.5"
   resolved "https://registry.yarnpkg.com/@zilliz/milvus2-sdk-node/-/milvus2-sdk-node-2.2.5.tgz#e871bf581608133d8340da386d3bd4a9ecddeeef"
   integrity sha512-ONneXXj2xOlN8qabQMVKEE3PxLta/toRrUYsP4m9H+mfViAuwnxGxcYXrrC2i+RdoMBEnrpy2HjPKdkWcXgHBw==
