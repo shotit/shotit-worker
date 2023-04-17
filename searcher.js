@@ -61,7 +61,7 @@ const search = async (hash) => {
   const milvusClient = new MilvusClient(MILVUS_URL);
 
   await milvusClient.collectionManager.loadCollectionSync({
-    collection_name: "trace_moe",
+    collection_name: "shotit",
   });
 
   const searchParams = {
@@ -82,7 +82,7 @@ const search = async (hash) => {
   console.log(normalizedCharCodesVector);
 
   const results = await milvusClient.dataManager.search({
-    collection_name: "trace_moe",
+    collection_name: "shotit",
     expr: "",
     vectors: [normalizedCharCodesVector],
     search_params: searchParams,
