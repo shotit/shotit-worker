@@ -8,8 +8,8 @@ ENTRYPOINT ["/tini", "--"]
 RUN apt-get update && apt-get install -y ffmpeg openjdk-17-jre
 ENV NODE_ENV=production
 WORKDIR /app
-COPY ["package.json", "package-lock.json*", "./"]
-RUN npm install --production
+COPY ["package.json", "yarn.lock*", "./"]
+RUN yarn install --production
 COPY jar/ ./jar/
 COPY hasher.js ./
 CMD [ "node", "hasher.js" ]
