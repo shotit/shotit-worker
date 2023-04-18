@@ -5,7 +5,7 @@ RUN apk add --no-cache tini
 ENTRYPOINT ["/sbin/tini", "--"]
 ENV NODE_ENV=production
 WORKDIR /app
-COPY ["package.json", "package-lock.json*", "./"]
-RUN npm install --production
+COPY ["package.json", "yarn.lock*", "./"]
+RUN yarn install --production
 COPY loader.js ./
 CMD [ "node", "loader.js" ]
