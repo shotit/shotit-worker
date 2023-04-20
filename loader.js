@@ -57,9 +57,9 @@ const initializeMilvusCollection = async () => {
     ],
   };
 
-  await milvusClient.releaseCollection({ collection_name: "shotit" });
+  await milvusClient.collectionManager.releaseCollection({ collection_name: "shotit" });
 
-  await milvusClient.createCollection(params);
+  await milvusClient.collectionManager.createCollection(params);
 
   milvusClient.closeConnection();
 };
@@ -184,20 +184,20 @@ const messageHandle = async (data) => {
       // Insert at a batch of 2 thousand each time, if more than that
       let loopCount = jsonData.length / 2000;
       if (loopCount <= 1) {
-        await milvusClient.insert({
+        await milvusClient.dataManager.insert({
           collection_name: "shotit",
           fields_data: jsonData,
         });
       } else {
         for (let i = 0; i < Math.ceil(loopCount); i++) {
           if (i === Math.ceil(loopCount) - 1) {
-            await milvusClient.insert({
+            await milvusClient.dataManager.insert({
               collection_name: "shotit",
               fields_data: jsonData.slice(i * 2000),
             });
             break;
           }
-          await milvusClient.insert({
+          await milvusClient.dataManager.insert({
             collection_name: "shotit",
             fields_data: jsonData.slice(i * 2000, i * 2000 + 2000),
           });
@@ -212,7 +212,7 @@ const messageHandle = async (data) => {
 
       // let loopCount = jsonData.length / 10000;
       // if (loopCount <= 1) {
-      //   await milvusClient.insert({
+      //   await milvusClient.dataManager.insert({
       //     collection_name: "shotit",
       //     fields_data: jsonData,
       //   });
@@ -227,7 +227,7 @@ const messageHandle = async (data) => {
       //   }
       //   await Promise.all(
       //     batchList.map(async (batch) => {
-      //       await milvusClient.insert({
+      //       await milvusClient.dataManager.insert({
       //         collection_name: "shotit",
       //         fields_data: batch,
       //       });
@@ -239,7 +239,7 @@ const messageHandle = async (data) => {
 
       startTime = performance.now();
       console.log("Flush begins", startTime);
-      await milvusClient.flushSync({ collection_names: ["shotit"] });
+      await milvusClient.dataManager.flushSync({ collection_names: ["shotit"] });
       console.log("Flush done", performance.now() - startTime);
 
       const index_params = {
@@ -250,7 +250,7 @@ const messageHandle = async (data) => {
 
       startTime = performance.now();
       console.log("Index begins", startTime);
-      await milvusClient.createIndex({
+      await milvusClient.indexManager.createIndex({
         collection_name: "shotit",
         field_name: "cl_ha",
         extra_params: index_params,
@@ -266,7 +266,7 @@ const messageHandle = async (data) => {
       // console.log("Load begins", startTime);
       // // Sync trick to prevent gRPC overload so that the follwing large-volume insert
       // // operation would not cause "Error: 14 UNAVAILABLE: Connection dropped"
-      // await milvusClient.loadCollectionSync({
+      // await milvusClient.collectionManager.loadCollectionSync({
       //   collection_name: "shotit",
       // });
       // console.log("Load done", performance.now() - startTime);
@@ -309,7 +309,7 @@ const closeHandle = async () => {
     startTime = performance.now();
     const milvusClient = new MilvusClient(MILVUS_URL);
     console.log("Flush begins", startTime);
-    await milvusClient.flushSync({ collection_names: ["shotit"] });
+    await milvusClient.dataManager.flushSync({ collection_names: ["shotit"] });
     console.log("Flush done", performance.now() - startTime);
     milvusClient.closeConnection();
   });
