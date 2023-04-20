@@ -6,6 +6,6 @@ ENTRYPOINT ["/sbin/tini", "--"]
 ENV NODE_ENV=production
 WORKDIR /app
 COPY ["package.json", "yarn.lock*", "./"]
-RUN yarn install --production
+RUN yarn install --frozen-lockfile --production
 COPY watch.js ./
 CMD [ "node", "watch.js" ]

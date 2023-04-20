@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y ffmpeg openjdk-17-jre
 ENV NODE_ENV=production
 WORKDIR /app
 COPY ["package.json", "yarn.lock*", "./"]
-RUN yarn install --production
+RUN yarn install --frozen-lockfile --production
 COPY jar/ ./jar/
 COPY hasher.js ./
 CMD [ "node", "hasher.js" ]
