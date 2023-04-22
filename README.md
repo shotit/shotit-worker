@@ -1,4 +1,4 @@
-# shotit-worker
+# Shotit-worker
 
 [![License](https://img.shields.io/github/license/shotit/shotit-worker.svg?style=flat-square)](https://github.com/shotit/shotit-worker/blob/master/LICENSE)
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/shotit/shotit-worker/docker-image.yml?branch=main&style=flat-square)](https://github.com/shotit/shotit-worker/actions)
@@ -22,26 +22,26 @@ Backend workers for [shotit](https://github.com/shotit/shotit). Four core worker
 
 ### Prerequisites
 
-- Node.js 14.x
+- Node.js 16.x, 18.x
 - ffmpeg 4.x
 - java (openjdk 1.8.0)
 - git
 - [pm2](https://pm2.keymetrics.io/)
 
-### Install
+### Local Development Guide
 
 Install Prerequisites first, then:
 
 ```
 git clone https://github.com/shotit/shotit-worker.git
 cd shotit-worker
-npm install
+yarn install
 ```
 
 ### Configuration
 
 - Copy `.env.example` to `.env`
-- Edit `.env` as appropriate for your setup
+- Edit `.env` as appropriate for your setup, as is for the first time.
 
 ### Start workers
 
@@ -50,11 +50,12 @@ You can use pm2 to run this in background in cluster mode.
 Use below commands to start / restart / stop server.
 
 ```
-npm run start
-npm run stop
-npm run reload
-npm run restart
-npm run delete
+yarn start
+yarn stop
+yarn reload
+yarn restart
+yarn delete
+yarn logs
 ```
 
 To change the number of nodejs instances, edit ecosystem.config.json
