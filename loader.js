@@ -174,14 +174,16 @@ const messageHandle = async (data) => {
     try {
       console.log(`Polish JSON data`);
 
-      const jsonData = dedupedHashList.map((doc) => {
-        return {
+      let jsonData = new Array(dedupedHashList.length).fill(null);
+      for (let i = 0; i < dedupedHashList.length; i++) {
+        const doc = dedupedHashList[i];
+        jsonData[i] = {
           id: `${file}/${doc.time.toFixed(2)}`,
           // cl_hi: doc.cl_hi, // reduce index size
           cl_ha: getNormalizedCharCodesVector(doc.cl_ha, 100, 1),
           primary_key: getPrimaryKey(doc.cl_hi),
         };
-      });
+      }
 
       // Pause for 5 seconds to make node arrange the compute resource.
       console.log("Pause for 5 seconds");
