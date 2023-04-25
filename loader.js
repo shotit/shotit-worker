@@ -57,11 +57,21 @@ const initializeMilvusCollection = async () => {
     ],
   };
 
-  await milvusClient.collectionManager.releaseCollection({ collection_name: "shotit" });
+  const fallBack = async () => {
+    try {
+      await milvusClient.collectionManager.releaseCollection({ collection_name: "shotit" });
+      await milvusClient.collectionManager.createCollection(params);
+      console.log('collection_name: "shotit" ensured');
+      milvusClient.closeConnection();
+    } catch (error) {
+      console.log(error);
+      console.log("initializeMilvusCollection reconnecting in 3 seconds");
+      await new Promise((resolve) => setTimeout(resolve, 1000 * 3));
+      await fallBack();
+    }
+  };
 
-  await milvusClient.collectionManager.createCollection(params);
-
-  milvusClient.closeConnection();
+  await fallBack();
 };
 
 /**
