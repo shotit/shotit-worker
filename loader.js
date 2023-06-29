@@ -5,6 +5,7 @@ import lzma from "lzma-native";
 import fetch from "node-fetch";
 import { MilvusClient } from "@zilliz/milvus2-sdk-node";
 import cron from "node-cron";
+import { chunk } from 'lodash';
 import JBC from "jsbi-calculator";
 const { calculator, BigDecimal } = JBC;
 
@@ -174,16 +175,36 @@ const messageHandle = async (data) => {
     try {
       console.log(`Polish JSON data`);
 
-      let jsonData = new Array(dedupedHashList.length).fill(null);
-      for (let i = 0; i < dedupedHashList.length; i++) {
-        const doc = dedupedHashList[i];
-        jsonData[i] = {
-          id: `${file}/${doc.time.toFixed(2)}`,
-          // cl_hi: doc.cl_hi, // reduce index size
-          cl_ha: getNormalizedCharCodesVector(doc.cl_ha, 100, 1),
-          primary_key: getPrimaryKey(doc.cl_hi),
-        };
+      // let jsonData = new Array(dedupedHashList.length).fill(null);
+      // for (let i = 0; i < dedupedHashList.length; i++) {
+      //   const doc = dedupedHashList[i];
+      //   jsonData[i] = {
+      //     id: `${file}/${doc.time.toFixed(2)}`,
+      //     // cl_hi: doc.cl_hi, // reduce index size
+      //     cl_ha: getNormalizedCharCodesVector(doc.cl_ha, 100, 1),
+      //     primary_key: getPrimaryKey(doc.cl_hi),
+      //   };
+      // }
+
+      // Parallel operation with 1000 as one unit
+      let chunkedJsonData = chunk(new Array(dedupedHashList.length).fill(null), 1000);
+      let chunkedDedupedHashList = chunk(dedupedHashList, 1000); // [1,...,2000] => [[1,...,1000],[1001,...,200]]
+      const modifier = (dedupedHashList, jsonData) => {
+        for (let i = 0; i < dedupedHashList.length; i++) {
+          const doc = dedupedHashList[i];
+          jsonData[i] = {
+            id: `${file}/${doc.time.toFixed(2)}`,
+            // cl_hi: doc.cl_hi, // reduce index size
+            cl_ha: getNormalizedCharCodesVector(doc.cl_ha, 100, 1),
+            primary_key: getPrimaryKey(doc.cl_hi),
+          };
+        }
+        return jsonData;
       }
+      const segments = await Promise.all(chunkedDedupedHashList.map((each, index) => {
+        return modifier(each, chunkedJsonData[index])
+      }));
+      const jsonData = flatten(segments);
 
       // Pause for 5 seconds to make node arrange the compute resource.
       console.log("Pause for 5 seconds");
