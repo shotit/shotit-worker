@@ -188,7 +188,7 @@ const messageHandle = async (data) => {
 
       // Parallel operation with 1000 as one unit
       let chunkedJsonData = chunk(new Array(dedupedHashList.length).fill(null), 1000);
-      let chunkedDedupedHashList = chunk(dedupedHashList, 1000); // [1,...,2000] => [[1,...,1000],[1001,...,200]]
+      let chunkedDedupedHashList = chunk(dedupedHashList, 1000); // [1,...,2000] => [[1,...,1000],[1001,...,2000]]
       const modifier = (dedupedHashList, jsonData) => {
         for (let i = 0; i < dedupedHashList.length; i++) {
           const doc = dedupedHashList[i];
