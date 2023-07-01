@@ -5,7 +5,7 @@ import lzma from "lzma-native";
 import fetch from "node-fetch";
 import { MilvusClient } from "@zilliz/milvus2-sdk-node";
 import cron from "node-cron";
-import { chunk } from 'lodash';
+import { chunk } from "lodash";
 import JBC from "jsbi-calculator";
 const { calculator, BigDecimal } = JBC;
 
@@ -200,10 +200,12 @@ const messageHandle = async (data) => {
           };
         }
         return jsonData;
-      }
-      const segments = await Promise.all(chunkedDedupedHashList.map((each, index) => {
-        return modifier(each, chunkedJsonData[index])
-      }));
+      };
+      const segments = await Promise.all(
+        chunkedDedupedHashList.map((each, index) => {
+          return modifier(each, chunkedJsonData[index]);
+        })
+      );
       const jsonData = flatten(segments);
 
       // Pause for 5 seconds to make node arrange the compute resource.
