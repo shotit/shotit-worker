@@ -131,7 +131,7 @@ const messageHandle = async (data) => {
     }
   );
   if (res.status >= 400) {
-    console.log(`Error: Fail to download "${await res.text()}"`);
+    console.log(`Error: Failed to download "${await res.text()}"`);
     ws.send(data);
     return;
   }

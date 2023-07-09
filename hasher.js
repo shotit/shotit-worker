@@ -54,7 +54,7 @@ const messageHandle = async (data) => {
     headers: { "x-trace-secret": TRACE_API_SECRET },
   });
   if (video.status >= 400) {
-    console.log(`Error: Fail to download video "${await video.text()}"`);
+    console.log(`Error: Failed to download video "${await video.text()}"`);
     ws.send(data);
     return;
   }
@@ -69,7 +69,7 @@ const messageHandle = async (data) => {
     });
   });
   if (!fs.existsSync(mp4FilePath)) {
-    console.log("Error: Fail to download video");
+    console.log("Error: Failed to download video");
     return;
   }
 
