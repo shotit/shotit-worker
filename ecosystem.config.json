@@ -16,7 +16,7 @@
     },
     {
       "name": "shotit-watcher",
-      "script": "watch.js",
+      "script": "watcher.js",
       "instances": 1,
       "autorestart": true,
       "exec_mode": "fork"
