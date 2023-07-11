@@ -4,13 +4,13 @@
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/shotit/shotit-worker/docker-image.yml?branch=main&style=flat-square)](https://github.com/shotit/shotit-worker/actions)
 [![GitHub release](https://img.shields.io/github/release/shotit/shotit-worker.svg)](https://github.com/shotit/shotit-worker/releases/latest)
 [![Watcher Docker](https://img.shields.io/docker/pulls/lesliewong007/shotit-worker-watcher?style=flat-square)](https://hub.docker.com/r/lesliewong007/shotit-worker-watcher)
-[![Watcher Docker Image Size](https://img.shields.io/docker/image-size/lesliewong007/shotit-worker-watcher/v0.9.5?style=flat-square)](https://hub.docker.com/r/lesliewong007/shotit-worker-watcher)
+[![Watcher Docker Image Size](https://img.shields.io/docker/image-size/lesliewong007/shotit-worker-watcher/v0.9.6?style=flat-square)](https://hub.docker.com/r/lesliewong007/shotit-worker-watcher)
 [![Hasher Docker](https://img.shields.io/docker/pulls/lesliewong007/shotit-worker-hasher?style=flat-square)](https://hub.docker.com/r/lesliewong007/shotit-worker-hasher)
-[![Hasher Docker Image Size](https://img.shields.io/docker/image-size/lesliewong007/shotit-worker-hasher/v0.9.5?style=flat-square)](https://hub.docker.com/r/lesliewong007/shotit-worker-hasher)
+[![Hasher Docker Image Size](https://img.shields.io/docker/image-size/lesliewong007/shotit-worker-hasher/v0.9.6?style=flat-square)](https://hub.docker.com/r/lesliewong007/shotit-worker-hasher)
 [![Loader Docker](https://img.shields.io/docker/pulls/lesliewong007/shotit-worker-loader?style=flat-square)](https://hub.docker.com/r/lesliewong007/shotit-worker-loader)
-[![Loader Docker Image Size](https://img.shields.io/docker/image-size/lesliewong007/shotit-worker-loader/v0.9.5?style=flat-square)](https://hub.docker.com/r/lesliewong007/shotit-worker-loader)
+[![Loader Docker Image Size](https://img.shields.io/docker/image-size/lesliewong007/shotit-worker-loader/v0.9.6?style=flat-square)](https://hub.docker.com/r/lesliewong007/shotit-worker-loader)
 [![Searcher Docker](https://img.shields.io/docker/pulls/lesliewong007/shotit-worker-searcher?style=flat-square)](https://hub.docker.com/r/lesliewong007/shotit-worker-searcher)
-[![Searcher Docker Image Size](https://img.shields.io/docker/image-size/lesliewong007/shotit-worker-searcher/v0.9.5?style=flat-square)](https://hub.docker.com/r/lesliewong007/shotit-worker-searcher)
+[![Searcher Docker Image Size](https://img.shields.io/docker/image-size/lesliewong007/shotit-worker-searcher/v0.9.6?style=flat-square)](https://hub.docker.com/r/lesliewong007/shotit-worker-searcher)
 
 Backend workers for [shotit](https://github.com/shotit/shotit). Four core workers of shotit: watcher, hasher, loader and searcher.
 
