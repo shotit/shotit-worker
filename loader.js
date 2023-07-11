@@ -6,7 +6,7 @@ import fetch from "node-fetch";
 import { MilvusClient } from "@zilliz/milvus2-sdk-node";
 import cron from "node-cron";
 import lodash from "lodash";
-const { chunk } = lodash;
+const { chunk, flatten } = lodash;
 import JBC from "jsbi-calculator";
 const { calculator, BigDecimal } = JBC;
 
