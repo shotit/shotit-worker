@@ -203,6 +203,10 @@ const messageHandle = async (data) => {
       );
       const jsonData = flatten(segments);
 
+      // Pause for 5 seconds to make node arrange the compute resource.
+      console.log("Pause for 5 seconds");
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+
       console.log(`Uploading JSON data to Milvus`);
 
       let startTime = performance.now();
