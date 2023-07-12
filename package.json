@@ -1,6 +1,6 @@
 {
   "name": "shotit-worker",
-  "version": "0.9.7",
+  "version": "0.9.8",
   "description": "Four core workers of shotit: watcher, hasher, loader and searcher",
   "main": "",
   "type": "module",
