@@ -272,18 +272,14 @@ const messageHandle = async (data) => {
       await milvusClient.flushSync({ collection_names: ["shotit"] });
       console.log("Flush done", performance.now() - startTime);
 
-      const index_params = {
-        metric_type: "IP",
-        index_type: "IVF_SQ8",
-        params: JSON.stringify({ nlist: 128 }),
-      };
-
       startTime = performance.now();
       console.log("Index begins", startTime);
       await milvusClient.createIndex({
         collection_name: "shotit",
         field_name: "cl_ha",
-        extra_params: index_params,
+        metric_type: "IP",
+        index_type: "IVF_SQ8",
+        params: { nlist: 128 },
       });
       console.log("Index done", performance.now() - startTime);
 
