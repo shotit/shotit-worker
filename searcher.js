@@ -58,7 +58,10 @@ const getNormalizedCharCodesVector = (str, length = 100, base = 1) => {
 };
 
 const search = async (hash) => {
-  const milvusClient = new MilvusClient(MILVUS_URL);
+  const milvusClient = new MilvusClient({
+    address: MILVUS_URL,
+    timeout: 60 * 1000, // 60s
+  });
 
   await milvusClient.loadCollectionSync({
     collection_name: "shotit",

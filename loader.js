@@ -20,7 +20,10 @@ const openHandle = async () => {
 };
 
 const initializeMilvusCollection = async () => {
-  const milvusClient = new MilvusClient(MILVUS_URL);
+  const milvusClient = new MilvusClient({
+    address: MILVUS_URL,
+    timeout: 60 * 1000, // 60s
+  });
 
   const params = {
     collection_name: "shotit",
@@ -164,7 +167,10 @@ const messageHandle = async (data) => {
     }
   });
 
-  const milvusClient = new MilvusClient(MILVUS_URL);
+  const milvusClient = new MilvusClient({
+    address: MILVUS_URL,
+    timeout: 60 * 1000, // 60s
+  });
   // The retry mechanism to prevent GRPC error
   const fallBack = async () => {
     try {
@@ -333,7 +339,10 @@ const closeHandle = async () => {
   // Flush once a day at 00:00 am.
   cron.schedule("0 0 * * *", async () => {
     startTime = performance.now();
-    const milvusClient = new MilvusClient(MILVUS_URL);
+    const milvusClient = new MilvusClient({
+      address: MILVUS_URL,
+      timeout: 60 * 1000, // 60s
+    });
     console.log("Flush begins", startTime);
     await milvusClient.flushSync({ collection_names: ["shotit"] });
     console.log("Flush done", performance.now() - startTime);
