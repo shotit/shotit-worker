@@ -209,9 +209,10 @@ const messageHandle = async (data) => {
       );
       const jsonData = flatten(segments);
 
-      // Pause for 5 seconds to make node arrange the compute resource.
-      console.log("Pause for 5 seconds");
-      await new Promise((resolve) => setTimeout(resolve, 5000));
+      // Pause for 1 second to make node arrange the compute resource.
+      // Note: not 5 in case of gRPC Error: 13 INTERNAL: No message received
+      console.log("Pause for 1 second");
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       console.log(`Uploading JSON data to Milvus`);
 
