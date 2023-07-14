@@ -3,7 +3,7 @@ import WebSocket from "ws";
 import xmldoc from "xmldoc";
 import lzma from "lzma-native";
 import fetch from "node-fetch";
-import { MilvusClient } from "@zilliz/milvus2-sdk-node";
+import { MilvusClient, DataType } from "@zilliz/milvus2-sdk-node";
 import cron from "node-cron";
 import lodash from "lodash";
 const { chunk, flatten } = lodash;
@@ -32,7 +32,7 @@ const initializeMilvusCollection = async () => {
       {
         name: "cl_ha",
         description: "Dynamic fields for LIRE Solr",
-        data_type: 101, // DataType.FloatVector
+        data_type: DataType.FloatVector,
         dim: 100,
       },
       // {
@@ -42,14 +42,14 @@ const initializeMilvusCollection = async () => {
       //   description: "Metric Spaces Indexing",
       // },
       {
-        name: "id",
-        data_type: 21, //DataType.VarChar
+        name: "hash_id",
+        data_type: DataType.VarChar,
         max_length: 500,
         description: "${imdbID}/${fileName}/${time}",
       },
       {
         name: "primary_key",
-        data_type: 5, //DataType.Int64
+        data_type: DataType.Int64,
         is_primary_key: true,
         description: "Primary Key",
       },
@@ -180,7 +180,7 @@ const messageHandle = async (data) => {
       // for (let i = 0; i < dedupedHashList.length; i++) {
       //   const doc = dedupedHashList[i];
       //   jsonData[i] = {
-      //     id: `${file}/${doc.time.toFixed(2)}`,
+      //     hash_id: `${file}/${doc.time.toFixed(2)}`,
       //     // cl_hi: doc.cl_hi, // reduce index size
       //     cl_ha: getNormalizedCharCodesVector(doc.cl_ha, 100, 1),
       //     primary_key: getPrimaryKey(doc.cl_hi),
@@ -194,7 +194,7 @@ const messageHandle = async (data) => {
         for (let i = 0; i < dedupedHashList.length; i++) {
           const doc = dedupedHashList[i];
           jsonData[i] = {
-            id: `${file}/${doc.time.toFixed(2)}`,
+            hash_id: `${file}/${doc.time.toFixed(2)}`,
             // cl_hi: doc.cl_hi, // reduce index size
             cl_ha: getNormalizedCharCodesVector(doc.cl_ha, 100, 1),
             primary_key: getPrimaryKey(doc.cl_hi),

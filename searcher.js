@@ -90,7 +90,7 @@ const search = async (hash) => {
   //   vectors: [normalizedCharCodesVector],
   //   search_params: searchParams,
   //   vector_type: 101, // DataType.FloatVector
-  //   output_fields: ["id", "primary_key"],
+  //   output_fields: ["hash_id", "primary_key"],
   // });
 
   const results = await milvusClient.search({
@@ -100,7 +100,7 @@ const search = async (hash) => {
     topk: 15,
     metric_type: "IP",
     params: { nprobe: 10 },
-    output_fields: ["id", "primary_key"],
+    output_fields: ["hash_id", "primary_key"],
   });
 
   return results;
