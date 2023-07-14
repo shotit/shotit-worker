@@ -22,7 +22,7 @@ const openHandle = async () => {
 const initializeMilvusCollection = async () => {
   const milvusClient = new MilvusClient({
     address: MILVUS_URL,
-    timeout: 60 * 1000, // 60s
+    timeout: 5 * 60 * 1000, // 5 mins
   });
 
   const params = {
@@ -169,7 +169,7 @@ const messageHandle = async (data) => {
 
   const milvusClient = new MilvusClient({
     address: MILVUS_URL,
-    timeout: 60 * 1000, // 60s
+    timeout: 5 * 60 * 1000, // 5 mins
   });
   // The retry mechanism to prevent GRPC error
   const fallBack = async () => {
@@ -341,7 +341,7 @@ const closeHandle = async () => {
     startTime = performance.now();
     const milvusClient = new MilvusClient({
       address: MILVUS_URL,
-      timeout: 60 * 1000, // 60s
+      timeout: 5 * 60 * 1000, // 5 mins
     });
     console.log("Flush begins", startTime);
     await milvusClient.flushSync({ collection_names: ["shotit"] });
