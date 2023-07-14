@@ -67,12 +67,12 @@ const search = async (hash) => {
     collection_name: "shotit",
   });
 
-  const searchParams = {
-    anns_field: "cl_ha",
-    topk: "15",
-    metric_type: "IP",
-    params: JSON.stringify({ nprobe: 10 }),
-  };
+  // const searchParams = {
+  //   anns_field: "cl_ha",
+  //   topk: "15",
+  //   metric_type: "IP",
+  //   params: JSON.stringify({ nprobe: 10 }),
+  // };
 
   const normalizedCharCodesVector = getNormalizedCharCodesVector(hash);
 
@@ -84,12 +84,22 @@ const search = async (hash) => {
 
   console.log(normalizedCharCodesVector);
 
+  // const results = await milvusClient.search({
+  //   collection_name: "shotit",
+  //   expr: "",
+  //   vectors: [normalizedCharCodesVector],
+  //   search_params: searchParams,
+  //   vector_type: 101, // DataType.FloatVector
+  //   output_fields: ["id", "primary_key"],
+  // });
+
   const results = await milvusClient.search({
     collection_name: "shotit",
     expr: "",
     vectors: [normalizedCharCodesVector],
-    search_params: searchParams,
-    vector_type: 101, // DataType.FloatVector
+    topk: 15,
+    metric_type: "IP",
+    params: { nprobe: 10 },
     output_fields: ["id", "primary_key"],
   });
 
