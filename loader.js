@@ -3,7 +3,7 @@ import WebSocket from "ws";
 import xmldoc from "xmldoc";
 import lzma from "lzma-native";
 import fetch from "node-fetch";
-import { MilvusClient, DataType } from "@zilliz/milvus2-sdk-node";
+import { MilvusClient, DataType, MetricType, IndexType } from "@zilliz/milvus2-sdk-node";
 import cron from "node-cron";
 import { Worker, isMainThread, workerData } from "node:worker_threads";
 import lodash from "lodash";
@@ -290,8 +290,8 @@ const messageHandle = async (data) => {
         await milvusClient.createIndex({
           collection_name: "shotit",
           field_name: "cl_ha",
-          metric_type: "IP",
-          index_type: "IVF_SQ8",
+          metric_type: MetricType.IP,
+          index_type: IndexType.IVF_SQ8,
           params: { nlist: 128 },
         });
         console.log("Index done", performance.now() - startTime);
