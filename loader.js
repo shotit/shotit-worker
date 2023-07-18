@@ -129,6 +129,7 @@ const getPrimaryKey = (str) => {
 /**
  * If isMainThread, spawn a new worker to load hash vectors, and when the
  * loading is done, terminate the worker.
+ * Use trunk indicator to prevent loader thread being overwhelming, eight at most one batch
  * @param {*} data
  * @returns
  */
@@ -138,13 +139,16 @@ const messageHandle = async (data) => {
     let worker = new Worker(__filename, { workerData: data.toString() });
     console.log("Spawn new Worker: ", worker.threadId);
     const resolve = (payload) => {
-      ws.send(payload);
+      const { trunk } = JSON.parse(payload);
+      if (trunk === "true") {
+        ws.send(payload);
+      }
       worker.terminate();
       worker = null;
     };
     worker.on("message", resolve);
   } else {
-    const { file } = JSON.parse(data);
+    const { file, trunk } = JSON.parse(data); // from workerData
 
     console.log(`Downloading ${file}.xml.xz`);
     const [imdbID, fileName] = file.split("/");
@@ -326,12 +330,12 @@ const messageHandle = async (data) => {
         // console.log("Load done", performance.now() - startTime);
 
         await fetch(`${TRACE_API_URL}/loaded/${imdbID}/${encodeURIComponent(fileName)}`, {
-          headers: { "x-trace-secret": TRACE_API_SECRET },
+          headers: { "x-trace-secret": TRACE_API_SECRET, "x-trunk-load": trunk },
         });
         // ws.send(data);
         console.log(`Loaded ${file}`);
         milvusClient.closeConnection();
-        parentPort.postMessage(data);
+        parentPort.postMessage(data); // from workerData
       } catch (error) {
         console.log(error);
         console.log("Reconnecting in 60 seconds");
