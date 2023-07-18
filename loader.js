@@ -5,7 +5,7 @@ import lzma from "lzma-native";
 import fetch from "node-fetch";
 import { MilvusClient, DataType, MetricType, IndexType } from "@zilliz/milvus2-sdk-node";
 import cron from "node-cron";
-import { Worker, isMainThread, workerData } from "node:worker_threads";
+import { Worker, isMainThread, workerData, parentPort } from "node:worker_threads";
 import { fileURLToPath } from "url";
 import lodash from "lodash";
 const { chunk, flatten } = lodash;
@@ -126,13 +126,25 @@ const getPrimaryKey = (str) => {
   }, 0);
 };
 
+/**
+ * If isMainThread, spawn a new worker to load hash vectors, and when the
+ * loading is done, terminate the worker.
+ * @param {*} data
+ * @returns
+ */
 const messageHandle = async (data) => {
   if (isMainThread) {
     // workerData is utilized at the end of this file
-    const worker = new Worker(__filename, { workerData: data });
-    console.log("Spawn new Worker", worker);
+    let worker = new Worker(__filename, { workerData: data.toString() });
+    console.log("Spawn new Worker: ", worker.threadId);
+    const resolve = (payload) => {
+      ws.send(payload);
+      worker.terminate();
+      worker = null;
+    };
+    worker.on("message", resolve);
   } else {
-    const { file } = JSON.parse(data.toString());
+    const { file } = JSON.parse(data);
 
     console.log(`Downloading ${file}.xml.xz`);
     const [imdbID, fileName] = file.split("/");
@@ -316,9 +328,10 @@ const messageHandle = async (data) => {
         await fetch(`${TRACE_API_URL}/loaded/${imdbID}/${encodeURIComponent(fileName)}`, {
           headers: { "x-trace-secret": TRACE_API_SECRET },
         });
-        ws.send(data);
+        // ws.send(data);
         console.log(`Loaded ${file}`);
         milvusClient.closeConnection();
+        parentPort.postMessage(data);
       } catch (error) {
         console.log(error);
         console.log("Reconnecting in 60 seconds");
