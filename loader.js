@@ -5,6 +5,7 @@ import lzma from "lzma-native";
 import fetch from "node-fetch";
 import { MilvusClient, DataType } from "@zilliz/milvus2-sdk-node";
 import cron from "node-cron";
+import { Worker, isMainThread, workerData } from "node:worker_threads";
 import lodash from "lodash";
 const { chunk, flatten } = lodash;
 import JBC from "jsbi-calculator";
@@ -123,202 +124,208 @@ const getPrimaryKey = (str) => {
 };
 
 const messageHandle = async (data) => {
-  const { file } = JSON.parse(data.toString());
+  if (isMainThread) {
+    // workerData is utilized at the end of this file
+    const worker = new Worker(__filename, { workerData: data });
+    console.log("Spawn new Worker", worker);
+  } else {
+    const { file } = JSON.parse(data.toString());
 
-  console.log(`Downloading ${file}.xml.xz`);
-  const [imdbID, fileName] = file.split("/");
-  const res = await fetch(
-    `${TRACE_API_URL}/hash/${imdbID}/${encodeURIComponent(fileName)}.xml.xz`,
-    {
-      headers: { "x-trace-secret": TRACE_API_SECRET },
+    console.log(`Downloading ${file}.xml.xz`);
+    const [imdbID, fileName] = file.split("/");
+    const res = await fetch(
+      `${TRACE_API_URL}/hash/${imdbID}/${encodeURIComponent(fileName)}.xml.xz`,
+      {
+        headers: { "x-trace-secret": TRACE_API_SECRET },
+      }
+    );
+    if (res.status >= 400) {
+      console.log(`Error: Failed to download "${await res.text()}"`);
+      ws.send(data);
+      return;
     }
-  );
-  if (res.status >= 400) {
-    console.log(`Error: Failed to download "${await res.text()}"`);
-    ws.send(data);
-    return;
-  }
 
-  console.log("Unzipping hash");
-  const xmlData = await lzma.decompress(Buffer.from(await res.arrayBuffer()));
+    console.log("Unzipping hash");
+    const xmlData = await lzma.decompress(Buffer.from(await res.arrayBuffer()));
 
-  console.log("Parsing xml");
-  const hashList = new xmldoc.XmlDocument(xmlData).children
-    .filter((child) => child.name === "doc")
-    .map((doc) => {
-      const fields = doc.children.filter((child) => child.name === "field");
-      return {
-        time: parseFloat(fields.filter((field) => field.attr.name === "id")[0].val),
-        cl_hi: fields.filter((field) => field.attr.name === "cl_hi")[0].val,
-        cl_ha: fields.filter((field) => field.attr.name === "cl_ha")[0].val,
-      };
-    })
-    .sort((a, b) => a.time - b.time);
+    console.log("Parsing xml");
+    const hashList = new xmldoc.XmlDocument(xmlData).children
+      .filter((child) => child.name === "doc")
+      .map((doc) => {
+        const fields = doc.children.filter((child) => child.name === "field");
+        return {
+          time: parseFloat(fields.filter((field) => field.attr.name === "id")[0].val),
+          cl_hi: fields.filter((field) => field.attr.name === "cl_hi")[0].val,
+          cl_ha: fields.filter((field) => field.attr.name === "cl_ha")[0].val,
+        };
+      })
+      .sort((a, b) => a.time - b.time);
 
-  const dedupedHashList = [];
-  hashList.forEach((currentFrame) => {
-    if (
-      !dedupedHashList
-        .slice(-24) // get last 24 frames
-        .filter((frame) => currentFrame.time - frame.time < 2) // select only frames within 2 seconds
-        .some((frame) => frame.cl_hi === currentFrame.cl_hi) // check for exact match frames
-    ) {
-      dedupedHashList.push(currentFrame);
-    }
-  });
+    const dedupedHashList = [];
+    hashList.forEach((currentFrame) => {
+      if (
+        !dedupedHashList
+          .slice(-24) // get last 24 frames
+          .filter((frame) => currentFrame.time - frame.time < 2) // select only frames within 2 seconds
+          .some((frame) => frame.cl_hi === currentFrame.cl_hi) // check for exact match frames
+      ) {
+        dedupedHashList.push(currentFrame);
+      }
+    });
 
-  const milvusClient = new MilvusClient({
-    address: MILVUS_URL,
-    timeout: 5 * 60 * 1000, // 5 mins
-  });
-  // The retry mechanism to prevent GRPC error
-  const fallBack = async () => {
-    try {
-      console.log(`Polish JSON data`);
+    const milvusClient = new MilvusClient({
+      address: MILVUS_URL,
+      timeout: 5 * 60 * 1000, // 5 mins
+    });
+    // The retry mechanism to prevent GRPC error
+    const fallBack = async () => {
+      try {
+        console.log(`Polish JSON data`);
 
-      // let jsonData = new Array(dedupedHashList.length).fill(null);
-      // for (let i = 0; i < dedupedHashList.length; i++) {
-      //   const doc = dedupedHashList[i];
-      //   jsonData[i] = {
-      //     hash_id: `${file}/${doc.time.toFixed(2)}`,
-      //     // cl_hi: doc.cl_hi, // reduce index size
-      //     cl_ha: getNormalizedCharCodesVector(doc.cl_ha, 100, 1),
-      //     primary_key: getPrimaryKey(doc.cl_hi),
-      //   };
-      // }
+        // let jsonData = new Array(dedupedHashList.length).fill(null);
+        // for (let i = 0; i < dedupedHashList.length; i++) {
+        //   const doc = dedupedHashList[i];
+        //   jsonData[i] = {
+        //     hash_id: `${file}/${doc.time.toFixed(2)}`,
+        //     // cl_hi: doc.cl_hi, // reduce index size
+        //     cl_ha: getNormalizedCharCodesVector(doc.cl_ha, 100, 1),
+        //     primary_key: getPrimaryKey(doc.cl_hi),
+        //   };
+        // }
 
-      // Parallel operation with 1000 as one unit
-      let chunkedJsonData = chunk(new Array(dedupedHashList.length).fill(null), 1000);
-      let chunkedDedupedHashList = chunk(dedupedHashList, 1000); // [1,...,2000] => [[1,...,1000],[1001,...,2000]]
-      const modifier = (dedupedHashList, jsonData) => {
-        for (let i = 0; i < dedupedHashList.length; i++) {
-          const doc = dedupedHashList[i];
-          jsonData[i] = {
-            hash_id: `${file}/${doc.time.toFixed(2)}`,
-            // cl_hi: doc.cl_hi, // reduce index size
-            cl_ha: getNormalizedCharCodesVector(doc.cl_ha, 100, 1),
-            primary_key: getPrimaryKey(doc.cl_hi),
-          };
-        }
-        return jsonData;
-      };
-      const segments = await Promise.all(
-        chunkedDedupedHashList.map((each, index) => {
-          return modifier(each, chunkedJsonData[index]);
-        })
-      );
-      const jsonData = flatten(segments);
-
-      // Pause for 1 second to make node arrange the compute resource.
-      // Note: not 5 in case of gRPC Error: 13 INTERNAL: No message received
-      console.log("Pause for 1 second");
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      console.log(`Uploading JSON data to Milvus`);
-
-      let startTime = performance.now();
-      console.log("Insert begins", startTime);
-      // Insert at a batch of 2 thousand each time, if more than that
-      let loopCount = jsonData.length / 2000;
-      if (loopCount <= 1) {
-        await milvusClient.insert({
-          collection_name: "shotit",
-          fields_data: jsonData,
-        });
-      } else {
-        for (let i = 0; i < Math.ceil(loopCount); i++) {
-          if (i === Math.ceil(loopCount) - 1) {
-            await milvusClient.insert({
-              collection_name: "shotit",
-              fields_data: jsonData.slice(i * 2000),
-            });
-            break;
+        // Parallel operation with 1000 as one unit
+        let chunkedJsonData = chunk(new Array(dedupedHashList.length).fill(null), 1000);
+        let chunkedDedupedHashList = chunk(dedupedHashList, 1000); // [1,...,2000] => [[1,...,1000],[1001,...,2000]]
+        const modifier = (dedupedHashList, jsonData) => {
+          for (let i = 0; i < dedupedHashList.length; i++) {
+            const doc = dedupedHashList[i];
+            jsonData[i] = {
+              hash_id: `${file}/${doc.time.toFixed(2)}`,
+              // cl_hi: doc.cl_hi, // reduce index size
+              cl_ha: getNormalizedCharCodesVector(doc.cl_ha, 100, 1),
+              primary_key: getPrimaryKey(doc.cl_hi),
+            };
           }
+          return jsonData;
+        };
+        const segments = await Promise.all(
+          chunkedDedupedHashList.map((each, index) => {
+            return modifier(each, chunkedJsonData[index]);
+          })
+        );
+        const jsonData = flatten(segments);
+
+        // Pause for 1 second to make node arrange the compute resource.
+        // Note: not 5 in case of gRPC Error: 13 INTERNAL: No message received
+        console.log("Pause for 1 second");
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        console.log(`Uploading JSON data to Milvus`);
+
+        let startTime = performance.now();
+        console.log("Insert begins", startTime);
+        // Insert at a batch of 2 thousand each time, if more than that
+        let loopCount = jsonData.length / 2000;
+        if (loopCount <= 1) {
           await milvusClient.insert({
             collection_name: "shotit",
-            fields_data: jsonData.slice(i * 2000, i * 2000 + 2000),
+            fields_data: jsonData,
           });
-          // Pause 500ms to prevent GRPC "Error: 14 UNAVAILABLE: Connection dropped"
-          // Reference: https://groups.google.com/g/grpc-io/c/xTJ8pUe9F_E
-          await new Promise((resolve) => setTimeout(resolve, 500));
+        } else {
+          for (let i = 0; i < Math.ceil(loopCount); i++) {
+            if (i === Math.ceil(loopCount) - 1) {
+              await milvusClient.insert({
+                collection_name: "shotit",
+                fields_data: jsonData.slice(i * 2000),
+              });
+              break;
+            }
+            await milvusClient.insert({
+              collection_name: "shotit",
+              fields_data: jsonData.slice(i * 2000, i * 2000 + 2000),
+            });
+            // Pause 500ms to prevent GRPC "Error: 14 UNAVAILABLE: Connection dropped"
+            // Reference: https://groups.google.com/g/grpc-io/c/xTJ8pUe9F_E
+            await new Promise((resolve) => setTimeout(resolve, 500));
+          }
         }
-      }
 
-      // // Parallel, don't use for exceed TCP concurrency limit
-      // // and the following "Error: 14 UNAVAILABLE: Connection dropped"
+        // // Parallel, don't use for exceed TCP concurrency limit
+        // // and the following "Error: 14 UNAVAILABLE: Connection dropped"
 
-      // let loopCount = jsonData.length / 10000;
-      // if (loopCount <= 1) {
-      //   await milvusClient.insert({
-      //     collection_name: "shotit",
-      //     fields_data: jsonData,
-      //   });
-      // } else {
-      //   const batchList = [];
-      //   for (let i = 0; i < Math.ceil(loopCount); i++) {
-      //     if (i === Math.ceil(loopCount) - 1) {
-      //       batchList.push(jsonData.slice(i * 10000));
-      //       break;
-      //     }
-      //     batchList.push(jsonData.slice(i * 10000, i * 10000 + 10000));
-      //   }
-      //   await Promise.all(
-      //     batchList.map(async (batch) => {
-      //       await milvusClient.insert({
-      //         collection_name: "shotit",
-      //         fields_data: batch,
-      //       });
-      //     })
-      //   );
-      // }
+        // let loopCount = jsonData.length / 10000;
+        // if (loopCount <= 1) {
+        //   await milvusClient.insert({
+        //     collection_name: "shotit",
+        //     fields_data: jsonData,
+        //   });
+        // } else {
+        //   const batchList = [];
+        //   for (let i = 0; i < Math.ceil(loopCount); i++) {
+        //     if (i === Math.ceil(loopCount) - 1) {
+        //       batchList.push(jsonData.slice(i * 10000));
+        //       break;
+        //     }
+        //     batchList.push(jsonData.slice(i * 10000, i * 10000 + 10000));
+        //   }
+        //   await Promise.all(
+        //     batchList.map(async (batch) => {
+        //       await milvusClient.insert({
+        //         collection_name: "shotit",
+        //         fields_data: batch,
+        //       });
+        //     })
+        //   );
+        // }
 
-      console.log("Insert done", performance.now() - startTime);
+        console.log("Insert done", performance.now() - startTime);
 
-      startTime = performance.now();
-      console.log("Flush begins", startTime);
-      await milvusClient.flushSync({ collection_names: ["shotit"] });
-      console.log("Flush done", performance.now() - startTime);
+        startTime = performance.now();
+        console.log("Flush begins", startTime);
+        await milvusClient.flushSync({ collection_names: ["shotit"] });
+        console.log("Flush done", performance.now() - startTime);
 
-      startTime = performance.now();
-      console.log("Index begins", startTime);
-      await milvusClient.createIndex({
-        collection_name: "shotit",
-        field_name: "cl_ha",
-        metric_type: "IP",
-        index_type: "IVF_SQ8",
-        params: { nlist: 128 },
-      });
-      console.log("Index done", performance.now() - startTime);
+        startTime = performance.now();
+        console.log("Index begins", startTime);
+        await milvusClient.createIndex({
+          collection_name: "shotit",
+          field_name: "cl_ha",
+          metric_type: "IP",
+          index_type: "IVF_SQ8",
+          params: { nlist: 128 },
+        });
+        console.log("Index done", performance.now() - startTime);
 
-      /* 
+        /* 
         Not trigger load yet at the index period.
         Take it at the search period to enchence index performance
       */
 
-      // startTime = performance.now();
-      // console.log("Load begins", startTime);
-      // // Sync trick to prevent gRPC overload so that the follwing large-volume insert
-      // // operation would not cause "Error: 14 UNAVAILABLE: Connection dropped"
-      // await milvusClient.loadCollectionSync({
-      //   collection_name: "shotit",
-      // });
-      // console.log("Load done", performance.now() - startTime);
+        // startTime = performance.now();
+        // console.log("Load begins", startTime);
+        // // Sync trick to prevent gRPC overload so that the follwing large-volume insert
+        // // operation would not cause "Error: 14 UNAVAILABLE: Connection dropped"
+        // await milvusClient.loadCollectionSync({
+        //   collection_name: "shotit",
+        // });
+        // console.log("Load done", performance.now() - startTime);
 
-      await fetch(`${TRACE_API_URL}/loaded/${imdbID}/${encodeURIComponent(fileName)}`, {
-        headers: { "x-trace-secret": TRACE_API_SECRET },
-      });
-      ws.send(data);
-      console.log(`Loaded ${file}`);
-      milvusClient.closeConnection();
-    } catch (error) {
-      console.log(error);
-      console.log("Reconnecting in 60 seconds");
-      await new Promise((resolve) => setTimeout(resolve, 60000));
-      await fallBack();
-    }
-  };
+        await fetch(`${TRACE_API_URL}/loaded/${imdbID}/${encodeURIComponent(fileName)}`, {
+          headers: { "x-trace-secret": TRACE_API_SECRET },
+        });
+        ws.send(data);
+        console.log(`Loaded ${file}`);
+        milvusClient.closeConnection();
+      } catch (error) {
+        console.log(error);
+        console.log("Reconnecting in 60 seconds");
+        await new Promise((resolve) => setTimeout(resolve, 60000));
+        await fallBack();
+      }
+    };
 
-  await fallBack();
+    await fallBack();
+  }
 };
 
 const closeHandle = async () => {
@@ -351,4 +358,8 @@ const closeHandle = async () => {
   });
 };
 
-closeHandle();
+if (!isMainThread) {
+  messageHandle(workerData);
+} else {
+  closeHandle();
+}
