@@ -7,7 +7,7 @@ import path from "path";
 import crypto from "crypto";
 import bodyParser from "body-parser";
 import fetch from "node-fetch";
-import { MilvusClient } from "@zilliz/milvus2-sdk-node";
+import { MilvusClient, MetricType } from "@zilliz/milvus2-sdk-node";
 import JBC from "jsbi-calculator";
 const { calculator, BigDecimal } = JBC;
 
@@ -70,7 +70,7 @@ const search = async (hash) => {
   // const searchParams = {
   //   anns_field: "cl_ha",
   //   topk: "15",
-  //   metric_type: "IP",
+  //   metric_type: MetricType.IP,
   //   params: JSON.stringify({ nprobe: 10 }),
   // };
 
@@ -98,7 +98,7 @@ const search = async (hash) => {
     expr: "",
     vectors: [normalizedCharCodesVector],
     topk: 15,
-    metric_type: "IP",
+    metric_type: MetricType.IP,
     params: { nprobe: 10 },
     output_fields: ["hash_id", "primary_key"],
   });
