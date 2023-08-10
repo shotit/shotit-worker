@@ -52,6 +52,11 @@ const initializeMilvusCollection = async () => {
         description: "${imdbID}/${fileName}/${time}",
       },
       {
+        name: "duration",
+        data_type: DataType.Float,
+        description: "Video duration of the given video file",
+      },
+      {
         name: "primary_key",
         data_type: DataType.Int64,
         is_primary_key: true,
@@ -180,6 +185,8 @@ const messageHandle = async (data) => {
       })
       .sort((a, b) => a.time - b.time);
 
+    const duration = hashList.at(-1)["time"];
+
     const dedupedHashList = [];
     hashList.forEach((currentFrame) => {
       if (
@@ -222,6 +229,7 @@ const messageHandle = async (data) => {
               hash_id: `${file}/${doc.time.toFixed(2)}`,
               // cl_hi: doc.cl_hi, // reduce index size
               cl_ha: getNormalizedCharCodesVector(doc.cl_ha, 100, 1),
+              duration: duration,
               primary_key: getPrimaryKey(doc.cl_hi),
             };
           }
