@@ -100,7 +100,7 @@ const search = async (hash) => {
     topk: 15,
     metric_type: MetricType.IP,
     params: { nprobe: 10 },
-    output_fields: ["hash_id", "primary_key"],
+    output_fields: ["hash_id", "duration", "primary_key"],
   });
 
   return results;
