@@ -12,9 +12,12 @@ const { chunk, flatten } = lodash;
 import JBC from "jsbi-calculator";
 const { calculator, BigDecimal } = JBC;
 
-const { TRACE_API_URL, TRACE_API_SECRET, MILVUS_URL } = process.env;
+const { TRACE_ALGO, TRACE_API_URL, TRACE_API_SECRET, MILVUS_URL } = process.env;
 
 const __filename = fileURLToPath(import.meta.url);
+
+const ALGO_hi = `${TRACE_ALGO}_hi`;
+const ALGO_ha = `${TRACE_ALGO}_ha`;
 
 let ws;
 const openHandle = async () => {
@@ -34,13 +37,13 @@ const initializeMilvusCollection = async () => {
     description: "Shotit Index Data Collection",
     fields: [
       {
-        name: "cl_ha",
+        name: `${ALGO_ha}`,
         description: "Dynamic fields for LIRE Solr",
         data_type: DataType.FloatVector,
         dim: 100,
       },
       // {
-      //   name: "cl_hi",
+      //   name: `${ALGO_hi}`,
       //   data_type: 21, //DataType.VarChar
       //   max_length: 200,
       //   description: "Metric Spaces Indexing",
@@ -179,8 +182,8 @@ const messageHandle = async (data) => {
         const fields = doc.children.filter((child) => child.name === "field");
         return {
           time: parseFloat(fields.filter((field) => field.attr.name === "id")[0].val),
-          cl_hi: fields.filter((field) => field.attr.name === "cl_hi")[0].val,
-          cl_ha: fields.filter((field) => field.attr.name === "cl_ha")[0].val,
+          [ALGO_hi]: fields.filter((field) => field.attr.name === `${ALGO_hi}`)[0].val,
+          [ALGO_ha]: fields.filter((field) => field.attr.name === `${ALGO_ha}`)[0].val,
         };
       })
       .sort((a, b) => a.time - b.time);
@@ -193,7 +196,7 @@ const messageHandle = async (data) => {
         !dedupedHashList
           .slice(-24) // get last 24 frames
           .filter((frame) => currentFrame.time - frame.time < 2) // select only frames within 2 seconds
-          .some((frame) => frame.cl_hi === currentFrame.cl_hi) // check for exact match frames
+          .some((frame) => frame[ALGO_hi] === currentFrame[ALGO_hi]) // check for exact match frames
       ) {
         dedupedHashList.push(currentFrame);
       }
@@ -213,9 +216,9 @@ const messageHandle = async (data) => {
         //   const doc = dedupedHashList[i];
         //   jsonData[i] = {
         //     hash_id: `${file}/${doc.time.toFixed(2)}`,
-        //     // cl_hi: doc.cl_hi, // reduce index size
-        //     cl_ha: getNormalizedCharCodesVector(doc.cl_ha, 100, 1),
-        //     primary_key: getPrimaryKey(doc.cl_hi),
+        //     // [ALGO_hi]: doc[ALGO_hi], // reduce index size
+        //     [ALGO_ha]: getNormalizedCharCodesVector(doc[ALGO_ha], 100, 1),
+        //     primary_key: getPrimaryKey(doc[ALGO_hi]),
         //   };
         // }
 
@@ -227,10 +230,10 @@ const messageHandle = async (data) => {
             const doc = dedupedHashList[i];
             jsonData[i] = {
               hash_id: `${file}/${doc.time.toFixed(2)}`,
-              // cl_hi: doc.cl_hi, // reduce index size
-              cl_ha: getNormalizedCharCodesVector(doc.cl_ha, 100, 1),
+              // [ALGO_hi]: doc[ALGO_hi], // reduce index size
+              [ALGO_ha]: getNormalizedCharCodesVector(doc[ALGO_ha], 100, 1),
               duration: duration,
-              primary_key: getPrimaryKey(doc.cl_hi),
+              primary_key: getPrimaryKey(doc[ALGO_hi]),
             };
           }
           return jsonData;
@@ -316,7 +319,7 @@ const messageHandle = async (data) => {
         console.log("Index begins", startTime);
         await milvusClient.createIndex({
           collection_name: "shotit",
-          field_name: "cl_ha",
+          field_name: `${ALGO_hi}`,
           metric_type: MetricType.IP,
           index_type: IndexType.IVF_SQ8,
           params: { nlist: 128 },

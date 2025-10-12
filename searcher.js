@@ -22,6 +22,9 @@ const {
 
 const SOLR_URL = `${SOLA_SOLR_LIST}${TRACE_ALGO}_0`;
 
+const ALGO_hi = `${TRACE_ALGO}_hi`;
+const ALGO_ha = `${TRACE_ALGO}_ha`;
+
 /**
  * getNormalizedCharCodesVector
  * @param {String} str
@@ -68,7 +71,7 @@ const search = async (hash) => {
   });
 
   // const searchParams = {
-  //   anns_field: "cl_ha",
+  //   anns_field: `${ALGO_ha}`,
   //   topk: "15",
   //   metric_type: MetricType.IP,
   //   params: JSON.stringify({ nprobe: 10 }),
@@ -198,7 +201,7 @@ app.post("/search", async (req, res) => {
   const fullImageUrl = `${SEARCHER_URL}${imageUrl}`;
 
   const solrResponse = await fetch(
-    `${SOLR_URL}/lireq?extract=${fullImageUrl}&field=cl_ha&ms=false&oh=false&accuracy=${TRACE_ACCURACY}`,
+    `${SOLR_URL}/lireq?extract=${fullImageUrl}&field=${ALGO_ha}&ms=false&oh=false&accuracy=${TRACE_ACCURACY}`,
     {
       method: "GET",
       mode: "cors",
