@@ -38,7 +38,7 @@
     "lodash": "^4.17.21",
     "lzma-native": "^8.0.6",
     "node-cron": "^3.0.2",
-    "node-fetch": "^3.2.10",
+    "node-fetch": "^3.3.2",
     "ws": "^8.14.2",
     "xmldoc": "^1.2.0"
   },
