@@ -67,7 +67,7 @@ const search = async (hash) => {
   });
 
   await milvusClient.loadCollectionSync({
-    collection_name: "shotit",
+    collection_name: `shotit_${TRACE_ALGO}`,
   });
 
   // const searchParams = {
@@ -88,7 +88,7 @@ const search = async (hash) => {
   console.log(normalizedCharCodesVector);
 
   // const results = await milvusClient.search({
-  //   collection_name: "shotit",
+  //   collection_name: `shotit_${TRACE_ALGO}`,
   //   expr: "",
   //   vectors: [normalizedCharCodesVector],
   //   search_params: searchParams,
@@ -97,7 +97,7 @@ const search = async (hash) => {
   // });
 
   const results = await milvusClient.search({
-    collection_name: "shotit",
+    collection_name: `shotit_${TRACE_ALGO}`,
     expr: "",
     vectors: [normalizedCharCodesVector],
     topk: 15,

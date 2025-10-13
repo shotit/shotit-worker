@@ -33,7 +33,7 @@ const initializeMilvusCollection = async () => {
   });
 
   const params = {
-    collection_name: "shotit",
+    collection_name: `shotit_${TRACE_ALGO}`,
     description: "Shotit Index Data Collection",
     fields: [
       {
@@ -70,9 +70,9 @@ const initializeMilvusCollection = async () => {
 
   const fallBack = async () => {
     try {
-      await milvusClient.releaseCollection({ collection_name: "shotit" });
+      await milvusClient.releaseCollection({ collection_name: `shotit_${TRACE_ALGO}` });
       await milvusClient.createCollection(params);
-      console.log('collection_name: "shotit" ensured');
+      console.log(`collection_name: shotit_${TRACE_ALGO} ensured`);
       milvusClient.closeConnection();
     } catch (error) {
       console.log(error);
@@ -258,20 +258,20 @@ const messageHandle = async (data) => {
         let loopCount = jsonData.length / 2000;
         if (loopCount <= 1) {
           await milvusClient.insert({
-            collection_name: "shotit",
+            collection_name: `shotit_${TRACE_ALGO}`,
             fields_data: jsonData,
           });
         } else {
           for (let i = 0; i < Math.ceil(loopCount); i++) {
             if (i === Math.ceil(loopCount) - 1) {
               await milvusClient.insert({
-                collection_name: "shotit",
+                collection_name: `shotit_${TRACE_ALGO}`,
                 fields_data: jsonData.slice(i * 2000),
               });
               break;
             }
             await milvusClient.insert({
-              collection_name: "shotit",
+              collection_name: `shotit_${TRACE_ALGO}`,
               fields_data: jsonData.slice(i * 2000, i * 2000 + 2000),
             });
             // Pause 500ms to prevent GRPC "Error: 14 UNAVAILABLE: Connection dropped"
@@ -286,7 +286,7 @@ const messageHandle = async (data) => {
         // let loopCount = jsonData.length / 10000;
         // if (loopCount <= 1) {
         //   await milvusClient.insert({
-        //     collection_name: "shotit",
+        //     collection_name: `shotit_${TRACE_ALGO}`,
         //     fields_data: jsonData,
         //   });
         // } else {
@@ -301,7 +301,7 @@ const messageHandle = async (data) => {
         //   await Promise.all(
         //     batchList.map(async (batch) => {
         //       await milvusClient.insert({
-        //         collection_name: "shotit",
+        //         collection_name: `shotit_${TRACE_ALGO}`,
         //         fields_data: batch,
         //       });
         //     })
@@ -312,13 +312,13 @@ const messageHandle = async (data) => {
 
         startTime = performance.now();
         console.log("Flush begins", startTime);
-        await milvusClient.flushSync({ collection_names: ["shotit"] });
+        await milvusClient.flushSync({ collection_names: [`shotit_${TRACE_ALGO}`] });
         console.log("Flush done", performance.now() - startTime);
 
         startTime = performance.now();
         console.log("Index begins", startTime);
         await milvusClient.createIndex({
-          collection_name: "shotit",
+          collection_name: `shotit_${TRACE_ALGO}`,
           field_name: `${ALGO_hi}`,
           metric_type: MetricType.IP,
           index_type: IndexType.IVF_SQ8,
@@ -336,7 +336,7 @@ const messageHandle = async (data) => {
         // // Sync trick to prevent gRPC overload so that the follwing large-volume insert
         // // operation would not cause "Error: 14 UNAVAILABLE: Connection dropped"
         // await milvusClient.loadCollectionSync({
-        //   collection_name: "shotit",
+        //   collection_name: `shotit_${TRACE_ALGO}`,
         // });
         // console.log("Load done", performance.now() - startTime);
 
@@ -383,7 +383,7 @@ const closeHandle = async () => {
       timeout: 5 * 60 * 1000, // 5 mins
     });
     console.log("Flush begins", startTime);
-    await milvusClient.flushSync({ collection_names: ["shotit"] });
+    await milvusClient.flushSync({ collection_names: [`shotit_${TRACE_ALGO}`] });
     console.log("Flush done", performance.now() - startTime);
     milvusClient.closeConnection();
   });
