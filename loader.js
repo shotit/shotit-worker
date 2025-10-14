@@ -319,7 +319,7 @@ const messageHandle = async (data) => {
         console.log("Index begins", startTime);
         await milvusClient.createIndex({
           collection_name: `shotit_${TRACE_ALGO}`,
-          field_name: `${ALGO_hi}`,
+          field_name: `${ALGO_ha}`,
           metric_type: MetricType.IP,
           index_type: IndexType.IVF_SQ8,
           params: { nlist: 128 },
