@@ -160,7 +160,7 @@ app.post("/uploadImage", async (req, res) => {
   fs.ensureDirSync(tempPath);
 
   fs.writeFileSync(path.join(tempPath, tempFileName), image);
-  console.log(`wirte file ${tempFileName}`);
+  console.log(`write file ${tempFileName}`);
   res.send(`/retriveImage?name=${tempFileName}`);
 
   // delete tempFile 1 minutes later
