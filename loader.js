@@ -70,12 +70,19 @@ const initializeMilvusCollection = async () => {
 
   const fallBack = async () => {
     try {
+      // The retried releaseCollection here with the error below "duplicated collection"
+      // would cause the collection-load unavailable.
       await milvusClient.releaseCollection({ collection_name: `shotit_${TRACE_ALGO}` });
       await milvusClient.createCollection(params);
       console.log(`collection_name: shotit_${TRACE_ALGO} ensured`);
       milvusClient.closeConnection();
     } catch (error) {
       console.log(error);
+      // use if to prevent error: 'UnexpectedError',
+      // reason: 'create duplicate collection with different parameters, collection:
+      if (error?.reason.includes("duplicate collection")) {
+        return;
+      }
       console.log("initializeMilvusCollection reconnecting in 3 seconds");
       await new Promise((resolve) => setTimeout(resolve, 1000 * 3));
       await fallBack();
