@@ -2,6 +2,7 @@ import "dotenv/config.js";
 import WebSocket from "ws";
 import xmldoc from "xmldoc";
 import lzma from "lzma-native";
+import { decompress } from "@napi-rs/lzma/xz";
 import fetch from "node-fetch";
 import { MilvusClient, DataType, MetricType, IndexType } from "@zilliz/milvus2-sdk-node";
 import cron from "node-cron";
@@ -180,7 +181,8 @@ const messageHandle = async (data) => {
     }
 
     console.log("Unzipping hash");
-    const xmlData = await lzma.decompress(Buffer.from(await res.arrayBuffer()));
+    // const xmlData = await lzma.decompress(Buffer.from(await res.arrayBuffer()));
+    const xmlData = await decompress(Buffer.from(await res.arrayBuffer()));
 
     console.log("Parsing xml");
     const hashList = new xmldoc.XmlDocument(xmlData).children
