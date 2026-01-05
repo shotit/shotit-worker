@@ -4,7 +4,8 @@ import path from "path";
 import os from "os";
 import fs from "fs-extra";
 import child_process from "child_process";
-import lzma from "lzma-native";
+// import lzma from "lzma-native";
+import { compress } from "@napi-rs/lzma/xz";
 import fetch from "node-fetch";
 
 const { TRACE_API_URL, TRACE_API_SECRET, TRACE_MEDIA_URL } = process.env;
@@ -164,7 +165,8 @@ const messageHandle = async (data) => {
   fs.removeSync(tempPath);
 
   console.log("Compressing XML");
-  const compressedXML = await lzma.compress(parsedXML, { preset: 6 });
+  // const compressedXML = await lzma.compress(parsedXML, { preset: 6 });
+  const compressedXML = await compress(parsedXML);
 
   console.log(`Uploading ${file}`);
   await fetch(`${TRACE_API_URL}/hash/${imdbID}/${encodeURIComponent(fileName)}`, {
