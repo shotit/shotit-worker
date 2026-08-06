@@ -29,7 +29,7 @@
   "dependencies": {
     "@napi-rs/lzma": "^1.4.5",
     "@zilliz/milvus2-sdk-node": "2.6.1",
-    "body-parser": "^1.20.0",
+    "body-parser": "^2.2.2",
     "chokidar": "^3.5.3",
     "dotenv": "^16.3.1",
     "express": "^4.18.1",
