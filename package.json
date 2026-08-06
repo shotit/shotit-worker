@@ -40,7 +40,7 @@
     "node-cron": "^3.0.2",
     "node-fetch": "^3.3.2",
     "ws": "^8.14.2",
-    "xmldoc": "^1.2.0"
+    "xmldoc": "^2.0.3"
   },
   "devDependencies": {
     "prettier": "^2.8.8"
