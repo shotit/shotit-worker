@@ -16,25 +16,25 @@
     enabled "2.0.x"
     kuler "^2.0.0"
 
-"@emnapi/core@^1.7.1":
-  version "1.8.1"
-  resolved "https://registry.npmjs.org/@emnapi/core/-/core-1.8.1.tgz#fd9efe721a616288345ffee17a1f26ac5dd01349"
-  integrity sha512-AvT9QFpxK0Zd8J0jopedNm+w/2fIzvtPKPjqyw9jwvBaReTTqPBk9Hixaz7KbjimP+QNz605/XnjFcDAL2pqBg==
+"@emnapi/core@1.11.2":
+  version "1.11.2"
+  resolved "https://registry.npmjs.org/@emnapi/core/-/core-1.11.2.tgz#fab0a0f3c492d11f5a9ac9065d0d73955ee1c1c9"
+  integrity sha512-TC8MkTuZUtcTSiFeuC0ksCh9QIJ5+F21MvZ4Wn4ORfYaFJ/0dsiudv5tVkejgwZlwQ39jL9WWDe2lz8x0WglOA==
   dependencies:
-    "@emnapi/wasi-threads" "1.1.0"
+    "@emnapi/wasi-threads" "1.2.2"
     tslib "^2.4.0"
 
-"@emnapi/runtime@^1.7.1":
-  version "1.8.1"
-  resolved "https://registry.npmjs.org/@emnapi/runtime/-/runtime-1.8.1.tgz#550fa7e3c0d49c5fb175a116e8cd70614f9a22a5"
-  integrity sha512-mehfKSMWjjNol8659Z8KxEMrdSJDDot5SXMq00dM8BN4o+CLNXQ0xH2V7EchNHV4RmbZLmmPdEaXZc5H2FXmDg==
+"@emnapi/runtime@1.11.2":
+  version "1.11.2"
+  resolved "https://registry.npmjs.org/@emnapi/runtime/-/runtime-1.11.2.tgz#eb22f04d76febfdf4f87fdaff54c8a53f6bf0dbd"
+  integrity sha512-kyOl3X0DuTiT1h2ft8r2fYO8JYtU9a9Xis/zBSiGArNaagCOWx90N1k2wxp18czFDH+OgcWGb5ZP/XMt3dcyPA==
   dependencies:
     tslib "^2.4.0"
 
-"@emnapi/wasi-threads@1.1.0":
-  version "1.1.0"
-  resolved "https://registry.npmjs.org/@emnapi/wasi-threads/-/wasi-threads-1.1.0.tgz#60b2102fddc9ccb78607e4a3cf8403ea69be41bf"
-  integrity sha512-WI0DdZ8xFSbgMjR1sFsKABJ/C5OnRrjT06JXbZKexJGrDuPTzZdDYfFlsgcCXCyf+suG5QU2e/y1Wo2V/OapLQ==
+"@emnapi/wasi-threads@1.2.2":
+  version "1.2.2"
+  resolved "https://registry.npmjs.org/@emnapi/wasi-threads/-/wasi-threads-1.2.2.tgz#4c93becf5bfa3b13d1bbdcc06aee38321ad8139a"
+  integrity sha512-c95qOXkHdydNKhscBTebqEC1CVAZpyqOfVfBzQ1qgzyl3gfeldUjIggDbIZgDKsHLgnsM+igH7TJ/eAasaVuMA==
   dependencies:
     tslib "^2.4.0"
 
@@ -67,124 +67,124 @@
     protobufjs "^7.2.5"
     yargs "^17.7.2"
 
-"@napi-rs/lzma-android-arm-eabi@1.4.5":
-  version "1.4.5"
-  resolved "https://registry.npmjs.org/@napi-rs/lzma-android-arm-eabi/-/lzma-android-arm-eabi-1.4.5.tgz#c6722a1d7201e269fdb6ba997d28cb41223e515c"
-  integrity sha512-Up4gpyw2SacmyKWWEib06GhiDdF+H+CCU0LAV8pnM4aJIDqKKd5LHSlBht83Jut6frkB0vwEPmAkv4NjQ5u//Q==
+"@napi-rs/lzma-android-arm-eabi@1.5.1":
+  version "1.5.1"
+  resolved "https://registry.npmjs.org/@napi-rs/lzma-android-arm-eabi/-/lzma-android-arm-eabi-1.5.1.tgz#5f3587db48dbdf4282cdb77f14e2576c75a1a5ef"
+  integrity sha512-sahBe4ko2Z69NPTddaX6ZgbQZu9SDoITxw1S3dWl1gAGynZG34qHHCT8UaUMFxf3h3zMhCJjEzz4basaBxiTuQ==
 
-"@napi-rs/lzma-android-arm64@1.4.5":
-  version "1.4.5"
-  resolved "https://registry.npmjs.org/@napi-rs/lzma-android-arm64/-/lzma-android-arm64-1.4.5.tgz#05df61667e84419e0550200b48169057b734806f"
-  integrity sha512-uwa8sLlWEzkAM0MWyoZJg0JTD3BkPknvejAFG2acUA1raXM8jLrqujWCdOStisXhqQjZ2nDMp3FV6cs//zjfuQ==
+"@napi-rs/lzma-android-arm64@1.5.1":
+  version "1.5.1"
+  resolved "https://registry.npmjs.org/@napi-rs/lzma-android-arm64/-/lzma-android-arm64-1.5.1.tgz#50ff89cbd0d389264091f21cc2a887e32ecebe49"
+  integrity sha512-7tkQAJJuBHxAxiEBNFgSTpvrtGpbwZYYJUSOmGEK3OfbdbNeoT2rdBxpM/gY1s+itEVbtOSlpaRPPG19MnwOzA==
 
-"@napi-rs/lzma-darwin-arm64@1.4.5":
-  version "1.4.5"
-  resolved "https://registry.npmjs.org/@napi-rs/lzma-darwin-arm64/-/lzma-darwin-arm64-1.4.5.tgz#c37a01c53f25cb7f014870d2ea6c5576138bcaaa"
-  integrity sha512-0Y0TQLQ2xAjVabrMDem1NhIssOZzF/y/dqetc6OT8mD3xMTDtF8u5BqZoX3MyPc9FzpsZw4ksol+w7DsxHrpMA==
+"@napi-rs/lzma-darwin-arm64@1.5.1":
+  version "1.5.1"
+  resolved "https://registry.npmjs.org/@napi-rs/lzma-darwin-arm64/-/lzma-darwin-arm64-1.5.1.tgz#abf56eb52f79788884926defa830d4bf0c7368a4"
+  integrity sha512-XWX8gtF+GHGk3nH3Wm3QUZNcxw9QHsFVZz3MzVLhWWHhceede1J4/vD+3dj3E1iKB9G6mualaZxOoD08R3E+7g==
 
-"@napi-rs/lzma-darwin-x64@1.4.5":
-  version "1.4.5"
-  resolved "https://registry.npmjs.org/@napi-rs/lzma-darwin-x64/-/lzma-darwin-x64-1.4.5.tgz#555b1dd65d7b104d28b2a12d925d7059226c7f4b"
-  integrity sha512-vR2IUyJY3En+V1wJkwmbGWcYiT8pHloTAWdW4pG24+51GIq+intst6Uf6D/r46citObGZrlX0QvMarOkQeHWpw==
+"@napi-rs/lzma-darwin-x64@1.5.1":
+  version "1.5.1"
+  resolved "https://registry.npmjs.org/@napi-rs/lzma-darwin-x64/-/lzma-darwin-x64-1.5.1.tgz#bf42f8bdcb9c9ffc840e017e9ef3bbc957b49a6e"
+  integrity sha512-CfsqUpMTI1z8enrA/b+GcHM6YDI8D0kqCiqPYEnst4rbOABQ9KZ92ybTTNnlnZ7A017WoMZKUEWc36KXDwi0xg==
 
-"@napi-rs/lzma-freebsd-x64@1.4.5":
-  version "1.4.5"
-  resolved "https://registry.npmjs.org/@napi-rs/lzma-freebsd-x64/-/lzma-freebsd-x64-1.4.5.tgz#683beff15b37774ec91e1de7b4d337894bf43694"
-  integrity sha512-XpnYQC5SVovO35tF0xGkbHYjsS6kqyNCjuaLQ2dbEblFRr5cAZVvsJ/9h7zj/5FluJPJRDojVNxGyRhTp4z2lw==
+"@napi-rs/lzma-freebsd-x64@1.5.1":
+  version "1.5.1"
+  resolved "https://registry.npmjs.org/@napi-rs/lzma-freebsd-x64/-/lzma-freebsd-x64-1.5.1.tgz#77deaed3cd03214005a59874c56ac65c2584e9ec"
+  integrity sha512-bTyNfg90FXIgE61U7l14aMmVOqRQ6AyP5JMT3jmCStaZI18apLNPdzZ8i7yqxZfKvRMVfPjE2brXIw27c+RRgA==
 
-"@napi-rs/lzma-linux-arm-gnueabihf@1.4.5":
-  version "1.4.5"
-  resolved "https://registry.npmjs.org/@napi-rs/lzma-linux-arm-gnueabihf/-/lzma-linux-arm-gnueabihf-1.4.5.tgz#505f659a9131474b7270afa4a4e9caf709c4d213"
-  integrity sha512-ic1ZZMoRfRMwtSwxkyw4zIlbDZGC6davC9r+2oX6x9QiF247BRqqT94qGeL5ZP4Vtz0Hyy7TEViWhx5j6Bpzvw==
+"@napi-rs/lzma-linux-arm-gnueabihf@1.5.1":
+  version "1.5.1"
+  resolved "https://registry.npmjs.org/@napi-rs/lzma-linux-arm-gnueabihf/-/lzma-linux-arm-gnueabihf-1.5.1.tgz#bdbfb2c9352e2f4d297ecb034ed92e6a538e8c3e"
+  integrity sha512-vNE+D8nrw+eOkBsdKCsmDhowDV3pIMKXEhedvXfbgrWbrO7GlZJH+RXL+X+RYLxGwi8Ym61ZMt15sIOnNmh9Sw==
 
-"@napi-rs/lzma-linux-arm64-gnu@1.4.5":
-  version "1.4.5"
-  resolved "https://registry.npmjs.org/@napi-rs/lzma-linux-arm64-gnu/-/lzma-linux-arm64-gnu-1.4.5.tgz#ecbb944635fa004a9415d1f50f165bc0d26d3807"
-  integrity sha512-asEp7FPd7C1Yi6DQb45a3KPHKOFBSfGuJWXcAd4/bL2Fjetb2n/KK2z14yfW8YC/Fv6x3rBM0VAZKmJuz4tysg==
+"@napi-rs/lzma-linux-arm64-gnu@1.5.1":
+  version "1.5.1"
+  resolved "https://registry.npmjs.org/@napi-rs/lzma-linux-arm64-gnu/-/lzma-linux-arm64-gnu-1.5.1.tgz#7382da151ace5308a80487566e5672c935b8f5df"
+  integrity sha512-csUem4WgoKGTprv/pOPm9UIWbb+hrfUwYXefpTHPAEGVFLl5behEFabisJ7FtihCa3yG2Efcl+yw25rlhhrIYw==
 
-"@napi-rs/lzma-linux-arm64-musl@1.4.5":
-  version "1.4.5"
-  resolved "https://registry.npmjs.org/@napi-rs/lzma-linux-arm64-musl/-/lzma-linux-arm64-musl-1.4.5.tgz#c0d17f40ce2db0b075469a28f233fd8ce31fbb95"
-  integrity sha512-yWjcPDgJ2nIL3KNvi4536dlT/CcCWO0DUyEOlBs/SacG7BeD6IjGh6yYzd3/X1Y3JItCbZoDoLUH8iB1lTXo3w==
+"@napi-rs/lzma-linux-arm64-musl@1.5.1":
+  version "1.5.1"
+  resolved "https://registry.npmjs.org/@napi-rs/lzma-linux-arm64-musl/-/lzma-linux-arm64-musl-1.5.1.tgz#26e2496ef6b169412cf62ccc11fef3277ecff467"
+  integrity sha512-kB/xhlVN1eLvVmDJSKZEjp5Gg2xDYexNrB5jwpSMbOkeGS6N9AasByPBg5VqCpMYC+zZi7DM458DRhtWYhqXTQ==
 
-"@napi-rs/lzma-linux-ppc64-gnu@1.4.5":
-  version "1.4.5"
-  resolved "https://registry.npmjs.org/@napi-rs/lzma-linux-ppc64-gnu/-/lzma-linux-ppc64-gnu-1.4.5.tgz#2f17b9d1fc920c6c511d2086c7623752172c2f07"
-  integrity sha512-0XRhKuIU/9ZjT4WDIG/qnX7Xz7mSQHYZo9Gb3MP2gcvBgr6BA4zywQ9k3gmQaPn9ECE+CZg2V7DV7kT+x2pUMQ==
+"@napi-rs/lzma-linux-ppc64-gnu@1.5.1":
+  version "1.5.1"
+  resolved "https://registry.npmjs.org/@napi-rs/lzma-linux-ppc64-gnu/-/lzma-linux-ppc64-gnu-1.5.1.tgz#673f802da03fa049968ef68cf055338caef8515c"
+  integrity sha512-s28RW0W1yBWQc1nbPdF7tp14koqslY3ZWLVI8uaanX292Dc6ezd4NPVwxEoCNBVON/oD7BmUbWGtyFvmm7dQ5A==
 
-"@napi-rs/lzma-linux-riscv64-gnu@1.4.5":
-  version "1.4.5"
-  resolved "https://registry.npmjs.org/@napi-rs/lzma-linux-riscv64-gnu/-/lzma-linux-riscv64-gnu-1.4.5.tgz#63c2a4e1157586252186e39604370d5b29c6db85"
-  integrity sha512-QrqDIPEUUB23GCpyQj/QFyMlr8SGxxyExeZz9OWFnHfb70kXdTLWrHS/hEI1Ru+lSbQ/6xRqeoGyQ4Aqdg+/RA==
+"@napi-rs/lzma-linux-riscv64-gnu@1.5.1":
+  version "1.5.1"
+  resolved "https://registry.npmjs.org/@napi-rs/lzma-linux-riscv64-gnu/-/lzma-linux-riscv64-gnu-1.5.1.tgz#61ea53821aaaf90539ead592d1e45d5c1b6ee19c"
+  integrity sha512-+lGNwYlIN14YPMTNvYtIJJqHFevDTd6Juw/1NmXbWx/iRd/LLrjhlM/yluMX6pxs6NkOGsuuEXJJrbbEUS59OQ==
 
-"@napi-rs/lzma-linux-s390x-gnu@1.4.5":
-  version "1.4.5"
-  resolved "https://registry.npmjs.org/@napi-rs/lzma-linux-s390x-gnu/-/lzma-linux-s390x-gnu-1.4.5.tgz#6f2ca44bf5c5bef1b31d7516bf15d63c35cdf59f"
-  integrity sha512-k8RVM5aMhW86E9H0QXdquwojew4H3SwPxbRVbl49/COJQWCUjGi79X6mYruMnMPEznZinUiT1jgKbFo2A00NdA==
+"@napi-rs/lzma-linux-s390x-gnu@1.5.1":
+  version "1.5.1"
+  resolved "https://registry.npmjs.org/@napi-rs/lzma-linux-s390x-gnu/-/lzma-linux-s390x-gnu-1.5.1.tgz#6adf3af1313b59240a2907b60e6394047c54c9b3"
+  integrity sha512-PB44FFWWFrLeQowhcep1hPD1YcLqKlnnY60RMU74qrxTlr4YGEyzeMItJqh2uivBfv9kQScOF/B0J9+Vab/oyw==
 
-"@napi-rs/lzma-linux-x64-gnu@1.4.5":
-  version "1.4.5"
-  resolved "https://registry.npmjs.org/@napi-rs/lzma-linux-x64-gnu/-/lzma-linux-x64-gnu-1.4.5.tgz#54879d88a9c370687b5463c7c1b6208b718c1ab2"
-  integrity sha512-6rMtBgnIq2Wcl1rQdZsnM+rtCcVCbws1nF8S2NzaUsVaZv8bjrPiAa0lwg4Eqnn1d9lgwqT+cZgm5m+//K08Kw==
+"@napi-rs/lzma-linux-x64-gnu@1.5.1":
+  version "1.5.1"
+  resolved "https://registry.npmjs.org/@napi-rs/lzma-linux-x64-gnu/-/lzma-linux-x64-gnu-1.5.1.tgz#e57d4306966078662038094fb38eb9146dc3aea9"
+  integrity sha512-oTXEIha4SsuXdTA4Iyskj0kpdx2yVXdhd75c2v3xGrHFfVMsbhTPZU/nMPL4sWKo4pBHm3aucLaqGlF696dTyQ==
 
-"@napi-rs/lzma-linux-x64-musl@1.4.5":
-  version "1.4.5"
-  resolved "https://registry.npmjs.org/@napi-rs/lzma-linux-x64-musl/-/lzma-linux-x64-musl-1.4.5.tgz#412705f6925f10f45122bd0f3e2fb6e597bed4f8"
-  integrity sha512-eiadGBKi7Vd0bCArBUOO/qqRYPHt/VQVvGyYvDFt6C2ZSIjlD+HuOl+2oS1sjf4CFjK4eDIog6EdXnL0NE6iyQ==
+"@napi-rs/lzma-linux-x64-musl@1.5.1":
+  version "1.5.1"
+  resolved "https://registry.npmjs.org/@napi-rs/lzma-linux-x64-musl/-/lzma-linux-x64-musl-1.5.1.tgz#19aefcc2c715f442266f06ac3b334b92ae987c1d"
+  integrity sha512-I3nsYrWtrW9JpeCr+mkJIVDt0HY3m6qVUBs5vTtoIvJQxwqf1PBXSy5IS7T53ksQFH2kd2UX8rLxJ7B4WISpZg==
 
-"@napi-rs/lzma-wasm32-wasi@1.4.5":
-  version "1.4.5"
-  resolved "https://registry.npmjs.org/@napi-rs/lzma-wasm32-wasi/-/lzma-wasm32-wasi-1.4.5.tgz#4b74abfd144371123cb6f5b7bad5bae868206ecf"
-  integrity sha512-+VyHHlr68dvey6fXc2hehw9gHVFIW3TtGF1XkcbAu65qVXsA9D/T+uuoRVqhE+JCyFHFrO0ixRbZDRK1XJt1sA==
+"@napi-rs/lzma-wasm32-wasi@1.5.1":
+  version "1.5.1"
+  resolved "https://registry.npmjs.org/@napi-rs/lzma-wasm32-wasi/-/lzma-wasm32-wasi-1.5.1.tgz#a559c5364aa9c2ca3aca457d9b5ea21f50fc1b62"
+  integrity sha512-gy3wwPBa6+XEyA4fUzq6CClrXA1ajXjuVf5zbnHytJRgoHznj+mvpU3+co2fxXwqTCmIpn6KrzqH5bRDztBPhA==
   dependencies:
-    "@napi-rs/wasm-runtime" "^1.0.3"
+    "@emnapi/core" "1.11.2"
+    "@emnapi/runtime" "1.11.2"
+    "@napi-rs/wasm-runtime" "^1.1.6"
 
-"@napi-rs/lzma-win32-arm64-msvc@1.4.5":
-  version "1.4.5"
-  resolved "https://registry.npmjs.org/@napi-rs/lzma-win32-arm64-msvc/-/lzma-win32-arm64-msvc-1.4.5.tgz#7ed8c80d588fa244a7fd55249cb0d011d04bf984"
-  integrity sha512-eewnqvIyyhHi3KaZtBOJXohLvwwN27gfS2G/YDWdfHlbz1jrmfeHAmzMsP5qv8vGB+T80TMHNkro4kYjeh6Deg==
+"@napi-rs/lzma-win32-arm64-msvc@1.5.1":
+  version "1.5.1"
+  resolved "https://registry.npmjs.org/@napi-rs/lzma-win32-arm64-msvc/-/lzma-win32-arm64-msvc-1.5.1.tgz#4e24c7b1e37009e5f781b82f1e7de29b44621fa9"
+  integrity sha512-dK+huOsHiyH6oJjij+cnjqFCakk2HgWmpI12Xm4pLUyPphe4ebYoJBgehaNAxprmjFqBQ7nL95YPVz9BHyqmPg==
 
-"@napi-rs/lzma-win32-ia32-msvc@1.4.5":
-  version "1.4.5"
-  resolved "https://registry.npmjs.org/@napi-rs/lzma-win32-ia32-msvc/-/lzma-win32-ia32-msvc-1.4.5.tgz#e6f70ca87bd88370102aa610ee9e44ec28911b46"
-  integrity sha512-OeacFVRCJOKNU/a0ephUfYZ2Yt+NvaHze/4TgOwJ0J0P4P7X1mHzN+ig9Iyd74aQDXYqc7kaCXA2dpAOcH87Cg==
+"@napi-rs/lzma-win32-ia32-msvc@1.5.1":
+  version "1.5.1"
+  resolved "https://registry.npmjs.org/@napi-rs/lzma-win32-ia32-msvc/-/lzma-win32-ia32-msvc-1.5.1.tgz#3e112893c59917fac22449b977f6ba628af61559"
+  integrity sha512-dGE8L+0EQ+GyU9ap9InqB/t/PmPG/bLj918q7OsJ29FuTdn8fK4OX3U4IQZhylHIA+/dQ/SXJk5n4yfah2XVvA==
 
-"@napi-rs/lzma-win32-x64-msvc@1.4.5":
-  version "1.4.5"
-  resolved "https://registry.npmjs.org/@napi-rs/lzma-win32-x64-msvc/-/lzma-win32-x64-msvc-1.4.5.tgz#ecfcfe364e805915608ce0ff41ed4c950fdb51b8"
-  integrity sha512-T4I1SamdSmtyZgDXGAGP+y5LEK5vxHUFwe8mz6D4R7Sa5/WCxTcCIgPJ9BD7RkpO17lzhlaM2vmVvMy96Lvk9Q==
+"@napi-rs/lzma-win32-x64-msvc@1.5.1":
+  version "1.5.1"
+  resolved "https://registry.npmjs.org/@napi-rs/lzma-win32-x64-msvc/-/lzma-win32-x64-msvc-1.5.1.tgz#6bef03b521fc17761a92adcc83e1bc40686b0211"
+  integrity sha512-EKW4t/iqdCT/xnd5t9oXLvVER/PMNAWXKqUAl3fgvUcOILeZIIht77/dVnfFcc9htA/DCBXC/6YQWdW+LusjFA==
 
-"@napi-rs/lzma@^1.4.5":
-  version "1.4.5"
-  resolved "https://registry.npmjs.org/@napi-rs/lzma/-/lzma-1.4.5.tgz#43e17cdfe332a3f33fa640422da348db3d8825e1"
-  integrity sha512-zS5LuN1OBPAyZpda2ZZgYOEDC+xecUdAGnrvbYzjnLXkrq/OBC3B9qcRvlxbDR3k5H/gVfvef1/jyUqPknqjbg==
+"@napi-rs/lzma@^1.5.1":
+  version "1.5.1"
+  resolved "https://registry.npmjs.org/@napi-rs/lzma/-/lzma-1.5.1.tgz#5d7fb1424e3ca4c420434cbb71aa12e938bdeac6"
+  integrity sha512-sgOZ89+y8cDbY+3WbzR8CtIhCuFRWotZ9/2PjPVDJHz6np5KFTAev0DrwiyTJTgFsCRDhfGlbmhMgyhHbWdZ6g==
   optionalDependencies:
-    "@napi-rs/lzma-android-arm-eabi" "1.4.5"
-    "@napi-rs/lzma-android-arm64" "1.4.5"
-    "@napi-rs/lzma-darwin-arm64" "1.4.5"
-    "@napi-rs/lzma-darwin-x64" "1.4.5"
-    "@napi-rs/lzma-freebsd-x64" "1.4.5"
-    "@napi-rs/lzma-linux-arm-gnueabihf" "1.4.5"
-    "@napi-rs/lzma-linux-arm64-gnu" "1.4.5"
-    "@napi-rs/lzma-linux-arm64-musl" "1.4.5"
-    "@napi-rs/lzma-linux-ppc64-gnu" "1.4.5"
-    "@napi-rs/lzma-linux-riscv64-gnu" "1.4.5"
-    "@napi-rs/lzma-linux-s390x-gnu" "1.4.5"
-    "@napi-rs/lzma-linux-x64-gnu" "1.4.5"
-    "@napi-rs/lzma-linux-x64-musl" "1.4.5"
-    "@napi-rs/lzma-wasm32-wasi" "1.4.5"
-    "@napi-rs/lzma-win32-arm64-msvc" "1.4.5"
-    "@napi-rs/lzma-win32-ia32-msvc" "1.4.5"
-    "@napi-rs/lzma-win32-x64-msvc" "1.4.5"
+    "@napi-rs/lzma-android-arm-eabi" "1.5.1"
+    "@napi-rs/lzma-android-arm64" "1.5.1"
+    "@napi-rs/lzma-darwin-arm64" "1.5.1"
+    "@napi-rs/lzma-darwin-x64" "1.5.1"
+    "@napi-rs/lzma-freebsd-x64" "1.5.1"
+    "@napi-rs/lzma-linux-arm-gnueabihf" "1.5.1"
+    "@napi-rs/lzma-linux-arm64-gnu" "1.5.1"
+    "@napi-rs/lzma-linux-arm64-musl" "1.5.1"
+    "@napi-rs/lzma-linux-ppc64-gnu" "1.5.1"
+    "@napi-rs/lzma-linux-riscv64-gnu" "1.5.1"
+    "@napi-rs/lzma-linux-s390x-gnu" "1.5.1"
+    "@napi-rs/lzma-linux-x64-gnu" "1.5.1"
+    "@napi-rs/lzma-linux-x64-musl" "1.5.1"
+    "@napi-rs/lzma-wasm32-wasi" "1.5.1"
+    "@napi-rs/lzma-win32-arm64-msvc" "1.5.1"
+    "@napi-rs/lzma-win32-ia32-msvc" "1.5.1"
+    "@napi-rs/lzma-win32-x64-msvc" "1.5.1"
 
-"@napi-rs/wasm-runtime@^1.0.3":
-  version "1.1.1"
-  resolved "https://registry.npmjs.org/@napi-rs/wasm-runtime/-/wasm-runtime-1.1.1.tgz#c3705ab549d176b8dc5172723d6156c3dc426af2"
-  integrity sha512-p64ah1M1ld8xjWv3qbvFwHiFVWrq1yFvV4f7w+mzaqiR4IlSgkqhcRdHwsGgomwzBH51sRY4NEowLxnaBjcW/A==
+"@napi-rs/wasm-runtime@^1.1.6":
+  version "1.2.3"
+  resolved "https://registry.npmjs.org/@napi-rs/wasm-runtime/-/wasm-runtime-1.2.3.tgz#97e3d45d7424dc5da1d4e32f3bf3b292f6c1b44c"
+  integrity sha512-UMduMbqO5s5zF2NkNacMT/yK5Y5QiKvWr2+50bzIIxFDwVJ2h49b+oyjaCGPhJxd2/gC2x39EHv/gHVuu36x2Q==
   dependencies:
-    "@emnapi/core" "^1.7.1"
-    "@emnapi/runtime" "^1.7.1"
-    "@tybys/wasm-util" "^0.10.1"
+    "@tybys/wasm-util" "^0.10.3"
 
 "@opentelemetry/api@^1.9.0":
   version "1.9.0"
@@ -249,10 +249,10 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==
 
-"@tybys/wasm-util@^0.10.1":
-  version "0.10.1"
-  resolved "https://registry.npmjs.org/@tybys/wasm-util/-/wasm-util-0.10.1.tgz#ecddd3205cf1e2d5274649ff0eedd2991ed7f414"
-  integrity sha512-9tTaPJLSiejZKx+Bmog4uSubteqTvFrVrURwkmHixBo0G4seD0zUxp98E1DzUBJxLQ3NPwXrGKDiVjwx/DpPsg==
+"@tybys/wasm-util@^0.10.3":
+  version "0.10.3"
+  resolved "https://registry.npmjs.org/@tybys/wasm-util/-/wasm-util-0.10.3.tgz#015cba9e9dd47ce14d03d2a8c5d547bfb169665d"
+  integrity sha512-F3fo1MYrRJYL3zER0OUOmkutjr1Vp23m7OsSgp7nq4SP6OqX6C/56XFIPAl5bt3zaBRjmW7SGz3u/6LwFpYcOg==
   dependencies:
     tslib "^2.4.0"
 

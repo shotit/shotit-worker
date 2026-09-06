@@ -4,10 +4,11 @@ import path from "path";
 import os from "os";
 import fs from "fs-extra";
 import child_process from "child_process";
+import fetch from "node-fetch";
 // import lzma from "lzma-native";
 // import { compress } from "@napi-rs/lzma/xz"; // original motivation: extend linux/arm64 support
-import { Compressor } from "@napi-rs/lzma/xz";
-import fetch from "node-fetch";
+import lzma from "@napi-rs/lzma/xz";
+const { Compressor } = lzma;
 
 const { TRACE_API_URL, TRACE_API_SECRET, TRACE_MEDIA_URL } = process.env;
 
