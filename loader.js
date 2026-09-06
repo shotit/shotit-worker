@@ -1,6 +1,6 @@
 import "dotenv/config.js";
 import WebSocket from "ws";
-import xmldoc from "xmldoc";
+// import xmldoc from "xmldoc";
 // import lzma from "lzma-native";
 import { decompress } from "@napi-rs/lzma/xz";
 import fetch from "node-fetch";
@@ -185,17 +185,84 @@ const messageHandle = async (data) => {
     const xmlData = await decompress(Buffer.from(await res.arrayBuffer()));
 
     console.log("Parsing xml");
-    const hashList = new xmldoc.XmlDocument(xmlData).children
-      .filter((child) => child.name === "doc")
-      .map((doc) => {
-        const fields = doc.children.filter((child) => child.name === "field");
-        return {
-          time: parseFloat(fields.filter((field) => field.attr.name === "id")[0].val),
-          [ALGO_hi]: fields.filter((field) => field.attr.name === `${ALGO_hi}`)[0].val,
-          [ALGO_ha]: fields.filter((field) => field.attr.name === `${ALGO_ha}`)[0].val,
-        };
-      })
-      .sort((a, b) => a.time - b.time);
+    // const hashList = new xmldoc.XmlDocument(xmlData).children
+    //   .filter((child) => child.name === "doc")
+    //   .map((doc) => {
+    //     const fields = doc.children.filter((child) => child.name === "field");
+    //     return {
+    //       time: parseFloat(fields.filter((field) => field.attr.name === "id")[0].val),
+    //       [ALGO_hi]: fields.filter((field) => field.attr.name === `${ALGO_hi}`)[0].val,
+    //       [ALGO_ha]: fields.filter((field) => field.attr.name === `${ALGO_ha}`)[0].val,
+    //     };
+    //   })
+    //   .sort((a, b) => a.time - b.time);
+
+    /**
+     * Turn to adopt a buffer flow jsonify approach
+     */
+    const parseDocBuffer = (docBuffer) => {
+      const docStr = docBuffer.toString("utf8");
+
+      const idMatch = docStr.match(/<field name="id">(.*?)<\/field>/);
+      const ALGO_hiMatch = docStr.match(new RegExp(`<field name="${ALGO_hi}">(.*?)</field>`));
+      const ALGO_haMatch = docStr.match(new RegExp(`<field name="${ALGO_ha}">(.*?)</field>`));
+
+      if (!idMatch) return null;
+
+      return {
+        time: idMatch ? idMatch[1] : null,
+        [ALGO_hi]: ALGO_hiMatch ? ALGO_hiMatch[1] : null,
+        [ALGO_ha]: ALGO_haMatch ? ALGO_haMatch[1] : null,
+      };
+    };
+
+    const xmlBufferFlowJsonify = (xmlBuffer) => {
+      const delimiter = Buffer.from("</doc>\n", "utf8");
+      const delimiterLen = delimiter.length;
+
+      let startPos = 0;
+      let nextPos = 0;
+      let count = 0;
+
+      const results = [];
+
+      while (true) {
+        nextPos = xmlBuffer.indexOf(delimiter, startPos);
+
+        if (nextPos === -1) {
+          if (startPos < xmlBuffer.length) {
+            console.log(`Processed ${count} items... End`);
+          }
+          break;
+        }
+
+        const docBuffer = xmlBuffer.slice(startPos, nextPos + delimiterLen);
+
+        try {
+          const jsonObj = parseDocBuffer(docBuffer);
+          if (jsonObj) {
+            results.push(jsonObj);
+            count++;
+
+            if (count % 1000 === 0) {
+              console.log(`Processed ${count} items...`);
+            }
+          }
+        } catch (e) {
+          console.error(`Error parsing item at offset ${startPos}:`, e.message);
+        }
+
+        startPos = nextPos + delimiterLen;
+      }
+
+      console.log(`Total processed: ${count}`);
+      return results;
+    };
+
+    const hashList = xmlBufferFlowJsonify(xmlData).sort((a, b) => a.time - b.time);
+    /**
+     * End: buffer flow jsonify approach
+     */
 
     const duration = hashList.at(-1)["time"];
 
